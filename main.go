@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	var s = server.New()
+	s := server.New()
 	s.MountRoutes(auth.AuthRoutes(s))
-	log.Fatal(http.ListenAndServe(":"+s.ApiConfig.PORT, s.App))
+	log.Fatal(http.ListenAndServe(":"+s.PORT, s.App))
 }
