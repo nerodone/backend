@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/go-chi/chi/v5"
@@ -13,14 +14,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type ApiConfig struct {
-	PORT string
-	Ctx  context.Context
-}
 type Server struct {
-	ApiConfig *ApiConfig
-	App       *chi.Mux
-	Db        *database.Queries
+	PORT       string
+	Ctx        context.Context
+	Log        *slog.Logger
+	App        *chi.Mux
+	Db         *database.Queries
+	JWT_SECRET []byte
 }
 
 func New() *Server {
@@ -38,8 +38,10 @@ func New() *Server {
 	}
 
 	return &Server{
-		App:       App,
-		ApiConfig: &ApiConfig{PORT: os.Getenv("PORT")},
-		Db:        database.New(db),
+		App:  App,
+		PORT: os.Getenv("PORT"),
+		Ctx:  context.Background(),
+		Db:   database.New(db),
+		Log:  slog.Default(),
 	}
 }
