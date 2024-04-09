@@ -12,9 +12,10 @@ import (
 	"github.com/google/uuid"
 )
 
-const signupWithPassword = `-- name: SignupWithPassword :exec
+const signupWithPassword = `-- name: SignupWithPassword :one
 insert into PasswordLogin (id , user_id , email , password , last_login)
 values ( gen_random_uuid(), $1 , $2 , $3 , NOW() )
+returning id
 `
 
 type SignupWithPasswordParams struct {
@@ -23,7 +24,9 @@ type SignupWithPasswordParams struct {
 	Password sql.NullString `json:"password"`
 }
 
-func (q *Queries) SignupWithPassword(ctx context.Context, arg SignupWithPasswordParams) error {
-	_, err := q.db.ExecContext(ctx, signupWithPassword, arg.UserID, arg.Email, arg.Password)
-	return err
+func (q *Queries) SignupWithPassword(ctx context.Context, arg SignupWithPasswordParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, signupWithPassword, arg.UserID, arg.Email, arg.Password)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }

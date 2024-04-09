@@ -12,9 +12,10 @@ import (
 	"github.com/google/uuid"
 )
 
-const createSessionWithOauth = `-- name: CreateSessionWithOauth :exec
+const createSessionWithOauth = `-- name: CreateSessionWithOauth :one
 insert into Sessions (id , user_id , access_token , refresh_token , platform, method,Oauth_id, password_login_id, created_at, last_login)
 values ( gen_random_uuid(), $1 , $2 , $3 , $4 ,'oauth', $5, NULL, NOW(), NOW())
+returning id
 `
 
 type CreateSessionWithOauthParams struct {
@@ -25,20 +26,23 @@ type CreateSessionWithOauthParams struct {
 	OauthID      uuid.NullUUID  `json:"oauth_id"`
 }
 
-func (q *Queries) CreateSessionWithOauth(ctx context.Context, arg CreateSessionWithOauthParams) error {
-	_, err := q.db.ExecContext(ctx, createSessionWithOauth,
+func (q *Queries) CreateSessionWithOauth(ctx context.Context, arg CreateSessionWithOauthParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, createSessionWithOauth,
 		arg.UserID,
 		arg.AccessToken,
 		arg.RefreshToken,
 		arg.Platform,
 		arg.OauthID,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
-const createSessionWithPassword = `-- name: CreateSessionWithPassword :exec
+const createSessionWithPassword = `-- name: CreateSessionWithPassword :one
 insert into Sessions (id , user_id , access_token , refresh_token , platform, method,Oauth_id, password_login_id, created_at, last_login)
 values ( gen_random_uuid(), $1 , $2 , $3 , $4 ,'password', NULL, $5, NOW(), NOW())
+returning id
 `
 
 type CreateSessionWithPasswordParams struct {
@@ -49,13 +53,15 @@ type CreateSessionWithPasswordParams struct {
 	PasswordLoginID uuid.NullUUID  `json:"password_login_id"`
 }
 
-func (q *Queries) CreateSessionWithPassword(ctx context.Context, arg CreateSessionWithPasswordParams) error {
-	_, err := q.db.ExecContext(ctx, createSessionWithPassword,
+func (q *Queries) CreateSessionWithPassword(ctx context.Context, arg CreateSessionWithPasswordParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, createSessionWithPassword,
 		arg.UserID,
 		arg.AccessToken,
 		arg.RefreshToken,
 		arg.Platform,
 		arg.PasswordLoginID,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
