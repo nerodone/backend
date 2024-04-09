@@ -22,8 +22,10 @@ CREATE TYPE EMethod AS ENUM ('password', 'oauth');
 CREATE TABLE Sessions (
 id uuid PRIMARY KEY,
   user_id uuid REFERENCES Users(id),
+  access_token varchar(255),
   refresh_token varchar(255) NOT NULL,
   platform EPlatform NOT NULL,
+
   method EMethod NOT NULL,
   Oauth_id uuid REFERENCES Oauth(id) ON DELETE CASCADE,
   password_login_id uuid REFERENCES PasswordLogin(id) ON DELETE CASCADE,

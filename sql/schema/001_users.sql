@@ -8,4 +8,4 @@ CREATE TABLE Users (
 );
 
 -- +goose Down
-DROP TABLE users ;
+DROP TABLE Users ;

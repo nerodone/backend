@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -17,8 +16,8 @@ values ( gen_random_uuid(), $1 , $2 , NOW() , NOW() )
 `
 
 type CreateUserParams struct {
-	UserName sql.NullString `json:"user_name"`
-	Email    sql.NullString `json:"email"`
+	UserName string `json:"user_name"`
+	Email    string `json:"email"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {

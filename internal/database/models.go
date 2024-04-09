@@ -8,9 +8,52 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
+
+type Emethod string
+
+const (
+	EmethodPassword Emethod = "password"
+	EmethodOauth    Emethod = "oauth"
+)
+
+func (e *Emethod) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Emethod(s)
+	case string:
+		*e = Emethod(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Emethod: %T", src)
+	}
+	return nil
+}
+
+type NullEmethod struct {
+	Emethod Emethod `json:"emethod"`
+	Valid   bool    `json:"valid"` // Valid is true if Emethod is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEmethod) Scan(value interface{}) error {
+	if value == nil {
+		ns.Emethod, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.Emethod.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEmethod) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.Emethod), nil
+}
 
 type Eplatform string
 
@@ -61,37 +104,36 @@ func (ns NullEplatform) Value() (driver.Value, error) {
 type Oauth struct {
 	ID       uuid.UUID      `json:"id"`
 	UserID   uuid.NullUUID  `json:"user_id"`
-	Provider sql.NullString `json:"provider"`
+	Provider string         `json:"provider"`
 	Avatar   sql.NullString `json:"avatar"`
-	Email    sql.NullString `json:"email"`
-	Username sql.NullString `json:"username"`
+	Email    string         `json:"email"`
+	Username string         `json:"username"`
 }
 
 type Passwordlogin struct {
 	ID        uuid.UUID      `json:"id"`
 	UserID    uuid.NullUUID  `json:"user_id"`
-	Email     sql.NullString `json:"email"`
+	Email     string         `json:"email"`
 	Password  sql.NullString `json:"password"`
-	LastLogin sql.NullTime   `json:"last_login"`
+	LastLogin time.Time      `json:"last_login"`
 }
 
 type Session struct {
-	ID              uuid.UUID      `json:"id"`
-	UserID          uuid.NullUUID  `json:"user_id"`
-	AccessToken     sql.NullString `json:"access_token"`
-	RefreshToken    sql.NullString `json:"refresh_token"`
-	Platform        NullEplatform  `json:"platform"`
-	Method          sql.NullString `json:"method"`
-	OauthID         uuid.NullUUID  `json:"oauth_id"`
-	PasswordLoginID uuid.NullUUID  `json:"password_login_id"`
-	CreatedAt       sql.NullTime   `json:"created_at"`
-	LastLogin       sql.NullTime   `json:"last_login"`
+	ID              uuid.UUID     `json:"id"`
+	UserID          uuid.NullUUID `json:"user_id"`
+	RefreshToken    string        `json:"refresh_token"`
+	Platform        Eplatform     `json:"platform"`
+	Method          Emethod       `json:"method"`
+	OauthID         uuid.NullUUID `json:"oauth_id"`
+	PasswordLoginID uuid.NullUUID `json:"password_login_id"`
+	CreatedAt       time.Time     `json:"created_at"`
+	LastLogin       time.Time     `json:"last_login"`
 }
 
 type User struct {
-	ID        uuid.UUID      `json:"id"`
-	UserName  sql.NullString `json:"user_name"`
-	Email     sql.NullString `json:"email"`
-	CreatedAt sql.NullTime   `json:"created_at"`
-	LastLogin sql.NullTime   `json:"last_login"`
+	ID        uuid.UUID `json:"id"`
+	UserName  string    `json:"user_name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
