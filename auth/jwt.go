@@ -71,9 +71,5 @@ func Decode(token string) DecodedToken {
 
 func Verify(token string) bool {
 	_, err := jwtauth.VerifyToken(TokenAuth, token)
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }
