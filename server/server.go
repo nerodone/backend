@@ -2,6 +2,7 @@ package server
 
 import (
 	"backend/internal/database"
+	"context"
 	"database/sql"
 	"os"
 
@@ -13,6 +14,7 @@ import (
 
 type ApiConfig struct {
 	PORT string
+	Ctx  context.Context
 }
 type Server struct {
 	ApiConfig *ApiConfig
@@ -23,7 +25,6 @@ type Server struct {
 func New() *Server {
 	godotenv.Load()
 	App := chi.NewRouter()
-	App.Use(middleware.Logger)
 
 	App.Use(middleware.Logger)
 

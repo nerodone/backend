@@ -8,7 +8,7 @@ import (
 
 func authRouter(s *server.Server) *chi.Mux {
 	r := chi.NewRouter()
-	r.Get("/signup", signup(s))
+	r.Post("/signup", signup(s))
 
 	return r
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/joho/godotenv"
-	"github.com/lestrrat-go/jwx/v2/jws"
 )
 
 var tokenAuth *jwtauth.JWTAuth
@@ -36,4 +35,3 @@ func encode(payload Payload) string {
 
 	return tokenString
 }
-
