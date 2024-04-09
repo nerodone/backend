@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"os"
 
-	_ "github.com/lib/pq"
-
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 type ApiConfig struct {
@@ -23,6 +23,8 @@ type Server struct {
 func New() *Server {
 	godotenv.Load()
 	App := chi.NewRouter()
+
+	App.Use(middleware.Logger)
 
 	db, err := sql.Open("postgres", os.Getenv("XATA_PG"))
 	if err != nil {
