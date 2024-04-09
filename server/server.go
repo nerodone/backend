@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -23,6 +24,8 @@ type Server struct {
 func New() *Server {
 	godotenv.Load()
 	App := chi.NewRouter()
+	App.Use(middleware.Logger)
+	App.Use(jwtMiddleware)
 
 	db, err := sql.Open("postgres", os.Getenv("XATA_PG"))
 	if err != nil {
