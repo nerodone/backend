@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -19,17 +18,17 @@ returning id, username, avatar
 `
 
 type SignupWithOauthParams struct {
-	UserID   uuid.NullUUID  `json:"user_id"`
-	Provider string         `json:"provider"`
-	Avatar   sql.NullString `json:"avatar"`
-	Email    string         `json:"email"`
-	Username string         `json:"username"`
+	UserID   uuid.UUID `json:"user_id"`
+	Provider string    `json:"provider"`
+	Avatar   string    `json:"avatar"`
+	Email    string    `json:"email"`
+	Username string    `json:"username"`
 }
 
 type SignupWithOauthRow struct {
-	ID       uuid.UUID      `json:"id"`
-	Username string         `json:"username"`
-	Avatar   sql.NullString `json:"avatar"`
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Avatar   string    `json:"avatar"`
 }
 
 func (q *Queries) SignupWithOauth(ctx context.Context, arg SignupWithOauthParams) (SignupWithOauthRow, error) {
