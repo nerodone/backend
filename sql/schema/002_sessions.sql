@@ -2,7 +2,7 @@
 CREATE TABLE PasswordLogin (
   id uuid PRIMARY KEY,
   user_id uuid REFERENCES Users(id),
-  email varchar(127) NOT NULL,
+  email varchar(127) UNIQUE NOT NULL,
   password varchar(255),
   last_login timestamp NOT NULL
 );
