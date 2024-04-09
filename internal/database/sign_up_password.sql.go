@@ -12,18 +12,18 @@ import (
 	"github.com/google/uuid"
 )
 
-const createPasswordSignupRecord = `-- name: CreatePasswordSignupRecord :exec
+const signupWithPassword = `-- name: SignupWithPassword :exec
 insert into PasswordLogin (id , user_id , email , password , last_login)
 values ( gen_random_uuid(), $1 , $2 , $3 , NOW() )
 `
 
-type CreatePasswordSignupRecordParams struct {
+type SignupWithPasswordParams struct {
 	UserID   uuid.NullUUID  `json:"user_id"`
 	Email    string         `json:"email"`
 	Password sql.NullString `json:"password"`
 }
 
-func (q *Queries) CreatePasswordSignupRecord(ctx context.Context, arg CreatePasswordSignupRecordParams) error {
-	_, err := q.db.ExecContext(ctx, createPasswordSignupRecord, arg.UserID, arg.Email, arg.Password)
+func (q *Queries) SignupWithPassword(ctx context.Context, arg SignupWithPasswordParams) error {
+	_, err := q.db.ExecContext(ctx, signupWithPassword, arg.UserID, arg.Email, arg.Password)
 	return err
 }

@@ -1,7 +1,7 @@
 -- +goose Up
 CREATE TABLE PasswordLogin (
   id uuid PRIMARY KEY,
-  user_id uuid REFERENCES Users(id),
+  user_id uuid REFERENCES Users(id) ON DELETE CASCADE,
   email varchar(127) UNIQUE NOT NULL,
   password varchar(255),
   last_login timestamp NOT NULL
@@ -20,8 +20,8 @@ CREATE TYPE EPlatform AS ENUM ('neovim', 'web', 'desktop', 'mobile', 'cli','vsco
 
 CREATE TYPE EMethod AS ENUM ('password', 'oauth');
 CREATE TABLE Sessions (
-id uuid PRIMARY KEY,
-  user_id uuid REFERENCES Users(id),
+   id uuid PRIMARY KEY,
+  user_id uuid REFERENCES Users(id) ON DELETE CASCADE,
   access_token varchar(255),
   refresh_token varchar(255) NOT NULL,
   platform EPlatform NOT NULL,
