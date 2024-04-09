@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -19,9 +18,9 @@ returning id
 `
 
 type SignupWithPasswordParams struct {
-	UserID   uuid.NullUUID  `json:"user_id"`
-	Email    string         `json:"email"`
-	Password sql.NullString `json:"password"`
+	UserID   uuid.UUID `json:"user_id"`
+	Email    string    `json:"email"`
+	Password string    `json:"password"`
 }
 
 func (q *Queries) SignupWithPassword(ctx context.Context, arg SignupWithPasswordParams) (uuid.UUID, error) {

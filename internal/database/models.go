@@ -5,7 +5,6 @@
 package database
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -102,33 +101,33 @@ func (ns NullEplatform) Value() (driver.Value, error) {
 }
 
 type Oauth struct {
-	ID       uuid.UUID      `json:"id"`
-	UserID   uuid.NullUUID  `json:"user_id"`
-	Provider string         `json:"provider"`
-	Avatar   sql.NullString `json:"avatar"`
-	Email    string         `json:"email"`
-	Username string         `json:"username"`
+	ID       uuid.UUID `json:"id"`
+	UserID   uuid.UUID `json:"user_id"`
+	Provider string    `json:"provider"`
+	Avatar   string    `json:"avatar"`
+	Email    string    `json:"email"`
+	Username string    `json:"username"`
 }
 
 type Passwordlogin struct {
-	ID        uuid.UUID      `json:"id"`
-	UserID    uuid.NullUUID  `json:"user_id"`
-	Email     string         `json:"email"`
-	Password  sql.NullString `json:"password"`
-	LastLogin time.Time      `json:"last_login"`
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 type Session struct {
-	ID              uuid.UUID      `json:"id"`
-	UserID          uuid.NullUUID  `json:"user_id"`
-	AccessToken     sql.NullString `json:"access_token"`
-	RefreshToken    string         `json:"refresh_token"`
-	Platform        Eplatform      `json:"platform"`
-	Method          Emethod        `json:"method"`
-	OauthID         uuid.NullUUID  `json:"oauth_id"`
-	PasswordLoginID uuid.NullUUID  `json:"password_login_id"`
-	CreatedAt       time.Time      `json:"created_at"`
-	LastLogin       time.Time      `json:"last_login"`
+	ID              uuid.UUID     `json:"id"`
+	UserID          uuid.UUID     `json:"user_id"`
+	AccessToken     string        `json:"access_token"`
+	RefreshToken    string        `json:"refresh_token"`
+	Platform        Eplatform     `json:"platform"`
+	Method          Emethod       `json:"method"`
+	OauthID         uuid.NullUUID `json:"oauth_id"`
+	PasswordLoginID uuid.NullUUID `json:"password_login_id"`
+	CreatedAt       time.Time     `json:"created_at"`
+	LastLogin       time.Time     `json:"last_login"`
 }
 
 type User struct {

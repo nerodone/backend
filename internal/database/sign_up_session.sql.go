@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -19,11 +18,11 @@ returning id
 `
 
 type CreateSessionWithOauthParams struct {
-	UserID       uuid.NullUUID  `json:"user_id"`
-	AccessToken  sql.NullString `json:"access_token"`
-	RefreshToken string         `json:"refresh_token"`
-	Platform     Eplatform      `json:"platform"`
-	OauthID      uuid.NullUUID  `json:"oauth_id"`
+	UserID       uuid.UUID     `json:"user_id"`
+	AccessToken  string        `json:"access_token"`
+	RefreshToken string        `json:"refresh_token"`
+	Platform     Eplatform     `json:"platform"`
+	OauthID      uuid.NullUUID `json:"oauth_id"`
 }
 
 func (q *Queries) CreateSessionWithOauth(ctx context.Context, arg CreateSessionWithOauthParams) (uuid.UUID, error) {
@@ -46,11 +45,11 @@ returning id
 `
 
 type CreateSessionWithPasswordParams struct {
-	UserID          uuid.NullUUID  `json:"user_id"`
-	AccessToken     sql.NullString `json:"access_token"`
-	RefreshToken    string         `json:"refresh_token"`
-	Platform        Eplatform      `json:"platform"`
-	PasswordLoginID uuid.NullUUID  `json:"password_login_id"`
+	UserID          uuid.UUID     `json:"user_id"`
+	AccessToken     string        `json:"access_token"`
+	RefreshToken    string        `json:"refresh_token"`
+	Platform        Eplatform     `json:"platform"`
+	PasswordLoginID uuid.NullUUID `json:"password_login_id"`
 }
 
 func (q *Queries) CreateSessionWithPassword(ctx context.Context, arg CreateSessionWithPasswordParams) (uuid.UUID, error) {
