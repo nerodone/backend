@@ -68,3 +68,12 @@ func Decode(token string) DecodedToken {
 		Sub:     decodedToken.Subject(),
 	}
 }
+
+func Verify(token string) bool {
+	_, err := jwtauth.VerifyToken(TokenAuth, token)
+	if err != nil {
+		return false
+	}
+
+	return true
+}

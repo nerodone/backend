@@ -21,3 +21,10 @@ func TestJWT(t *testing.T) {
 	assert.Equal(t, payload, decodedToken.Payload)
 	assert.Equal(t, exp, decodedToken.Exp)
 }
+
+func TestVerifyToken(t *testing.T) {
+	token := Encode(secret)(payload)
+
+	assert.True(t, Verify(token))
+	assert.False(t, Verify(token[:len(token)-1]+"a"))
+}
