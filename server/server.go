@@ -25,7 +25,6 @@ func New() *Server {
 	godotenv.Load()
 	App := chi.NewRouter()
 	App.Use(middleware.Logger)
-	App.Use(jwtMiddleware)
 
 	db, err := sql.Open("postgres", os.Getenv("XATA_PG"))
 	if err != nil {
