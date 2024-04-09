@@ -9,27 +9,27 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-var tokenAuth *jwtauth.JWTAuth
+var TokenAuth *jwtauth.JWTAuth
 
 type Payload struct {
 	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 }
 
-func encode(payload Payload) string {
+func Encode(payload Payload) string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
 
 	secret := os.Getenv("JWT_SECRET")
-	tokenAuth = jwtauth.New("HS256", []byte(secret), nil)
+	TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
 
 	payloadMap := map[string]interface{}{
 		"user_id":  payload.UserID,
 		"username": payload.Username,
 	}
-	_, tokenString, err := tokenAuth.Encode(payloadMap)
+	_, tokenString, err := TokenAuth.Encode(payloadMap)
 	if err != nil {
 		log.Fatal("Error encoding token", err)
 	}
@@ -37,8 +37,8 @@ func encode(payload Payload) string {
 	return tokenString
 }
 
-func decode(token string) (Payload, jwt.Token) {
-	decodedToken, err := tokenAuth.Decode(token)
+func Decode(token string) (Payload, jwt.Token) {
+	decodedToken, err := TokenAuth.Decode(token)
 
 	if err != nil {
 		log.Fatal("Error decoding token", err)
