@@ -1,10 +1,21 @@
 package auth
 
-import "github.com/go-chi/chi/v5"
+import (
+	"backend/server"
 
-func AuthRouter() *chi.Mux {
+	"github.com/go-chi/chi/v5"
+)
+
+func authRouter(s *server.Server) *chi.Mux {
 	r := chi.NewRouter()
-	r.Get("/signup", handlerUserSignUp)
+	r.Get("/signup", signup(s))
 
 	return r
+}
+
+func AuthRoutes(s *server.Server) server.Route {
+	return server.Route{
+		Endpoint: "/auth",
+		Handler:  authRouter(s),
+	}
 }

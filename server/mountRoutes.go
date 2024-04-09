@@ -1,12 +1,18 @@
 package server
 
 import "github.com/go-chi/chi/v5"
-import "backend/auth"
 
-func (s *Server) MountRoutes() {
+type Route struct {
+	Endpoint string
+	Handler  *chi.Mux
+}
+
+func (s *Server) MountRoutes(route ...Route) {
 	r := chi.NewRouter()
 
-	r.Mount("/auth", auth.AuthRouter())
+	for _, rt := range route {
+		r.Mount(rt.Endpoint, rt.Handler)
+	}
 
 	s.App.Mount("/", r)
 }

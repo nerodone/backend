@@ -1,6 +1,9 @@
 package auth
 
-import "net/http"
+import (
+	"backend/server"
+	"net/http"
+)
 
 type UserSignupReq struct {
 	UserName string `json:"user_name"`
@@ -13,6 +16,8 @@ type UserSignupResp struct {
 	AccessToken  string `json:"access_token"`
 }
 
-func handlerUserSignUp(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Auth Signup"))
+func signup(s *server.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Auth Signup"))
+	}
 }
