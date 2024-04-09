@@ -1,4 +1,4 @@
-package main
+package auth
 
 import "net/http"
 
@@ -14,4 +14,5 @@ type UserSignupResp struct {
 }
 
 func handlerUserSignUp(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Auth Signup"))
 }

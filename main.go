@@ -1,9 +1,13 @@
 package main
 
-import "net/http"
+import (
+	"backend/server"
+	"log"
+	"net/http"
+)
 
 func main() {
-	s := newSrv()
-	s.addRoutes()
-	http.ListenAndServe(":"+s.apiCfg.PORT, s.app)
+	var s = server.New()
+	s.MountRoutes()
+	log.Fatal(http.ListenAndServe(":"+s.ApiConfig.PORT, s.App))
 }
