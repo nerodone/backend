@@ -2,6 +2,7 @@ package server
 
 import (
 	"backend/internal/database"
+	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -14,6 +15,7 @@ import (
 
 type ApiConfig struct {
 	PORT string
+	Ctx  context.Context
 }
 type Server struct {
 	ApiConfig *ApiConfig
@@ -27,7 +29,6 @@ func New() *Server {
 		log.Fatal("Error loading .env file", err)
 	}
 	App := chi.NewRouter()
-	App.Use(middleware.Logger)
 
 	App.Use(middleware.Logger)
 

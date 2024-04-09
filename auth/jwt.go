@@ -39,7 +39,6 @@ func Encode(payload Payload) string {
 
 func Decode(token string) (Payload, jwt.Token) {
 	decodedToken, err := TokenAuth.Decode(token)
-
 	if err != nil {
 		log.Fatal("Error decoding token", err)
 	}
