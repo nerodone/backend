@@ -2,10 +2,8 @@ package auth
 
 import (
 	"log"
-	"os"
 
 	"github.com/go-chi/jwtauth/v5"
-	"github.com/joho/godotenv"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
@@ -16,25 +14,21 @@ type Payload struct {
 	Username string `json:"username"`
 }
 
-func Encode(payload Payload) string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
-	}
+func Encode(secret string) func(payload Payload) string {
+	return func(payload Payload) string {
+		TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
 
-	secret := os.Getenv("JWT_SECRET")
-	TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
+		payloadMap := map[string]interface{}{
+			"user_id":  payload.UserID,
+			"username": payload.Username,
+		}
+		_, tokenString, err := TokenAuth.Encode(payloadMap)
+		if err != nil {
+			log.Fatal("Error encoding token", err)
+		}
 
-	payloadMap := map[string]interface{}{
-		"user_id":  payload.UserID,
-		"username": payload.Username,
+		return tokenString
 	}
-	_, tokenString, err := TokenAuth.Encode(payloadMap)
-	if err != nil {
-		log.Fatal("Error encoding token", err)
-	}
-
-	return tokenString
 }
 
 func Decode(token string) (Payload, jwt.Token) {
