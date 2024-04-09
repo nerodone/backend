@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/joho/godotenv"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 var tokenAuth *jwtauth.JWTAuth
@@ -34,4 +35,21 @@ func encode(payload Payload) string {
 	}
 
 	return tokenString
+}
+
+func decode(token string) (Payload, jwt.Token) {
+	decodedToken, err := tokenAuth.Decode(token)
+
+	if err != nil {
+		log.Fatal("Error decoding token", err)
+	}
+
+	claims := decodedToken.PrivateClaims()
+
+	payload := Payload{
+		UserID:   claims["user_id"].(string),
+		Username: claims["username"].(string),
+	}
+
+	return payload, decodedToken
 }
