@@ -3,22 +3,21 @@ package auth
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
-var fakeSecret = "HelloWorld"
-var fakePayload = Payload{
+var secret = "HelloWorld"
+var payload = Payload{
 	UserID:   "1",
 	Username: "test",
 }
-var fakeToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsInVzZXJuYW1lIjoidGVzdCJ9.n-R354fEZAn0_SqllaJZ4IEtQd_HI3XUYa8BOw2OEog"
 
-func TestEncode(t *testing.T) {
-	encoder := Encode(fakeSecret)
-	token := encoder(fakePayload)
-	assert.Equal(t, fakeToken, token)
-}
+func TestJWT(t *testing.T) {
+	exp := time.Now().Add(time.Hour * 24).Truncate(time.Second).UTC()
 
-func TestDecode(t *testing.T) {
-	payload, _ := Decode(fakeToken)
-	assert.Equal(t, fakePayload, payload)
+	token := Encode(secret)(payload)
+	decodedToken := Decode(token)
+
+	assert.Equal(t, payload, decodedToken.Payload)
+	assert.Equal(t, exp, decodedToken.Exp)
 }
