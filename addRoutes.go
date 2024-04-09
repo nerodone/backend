@@ -9,5 +9,5 @@ func (s *server) addRoutes() {
 	users := s.userRoutes()
 	r.Mount("/users", users)
 
-	s.app.Mount("api/", r)
+	s.app.Mount("/api", r)
 }
