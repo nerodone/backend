@@ -3,6 +3,7 @@ package server
 import (
 	"backend/internal/database"
 	"database/sql"
+	"log"
 	"os"
 
 	"github.com/go-chi/chi/v5"
@@ -21,7 +22,10 @@ type Server struct {
 }
 
 func New() *Server {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
 	App := chi.NewRouter()
 	App.Use(middleware.Logger)
 

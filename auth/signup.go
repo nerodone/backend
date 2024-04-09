@@ -16,8 +16,11 @@ type UserSignupResp struct {
 	AccessToken  string `json:"access_token"`
 }
 
-func signup(s *server.Server) http.HandlerFunc {
+func signup(_ *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Auth Signup"))
+		_, err := w.Write([]byte("Auth Signup"))
+		if err != nil {
+			return
+		}
 	}
 }
