@@ -6,13 +6,12 @@ import (
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/joho/godotenv"
-	"github.com/lestrrat-go/jwx/v2/jws"
 )
 
 var tokenAuth *jwtauth.JWTAuth
 
 type Payload struct {
-	UserID   int    `json:"user_id"`
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 }
 
@@ -36,4 +35,3 @@ func encode(payload Payload) string {
 
 	return tokenString
 }
-
