@@ -31,7 +31,7 @@ func New() *Server {
 
 	return &Server{
 		App:       App,
-		ApiConfig: &ApiConfig{PORT: os.Getenv("APIPORT")},
+		ApiConfig: &ApiConfig{PORT: os.Getenv("PORT")},
 		Db:        database.New(db),
 	}
 }
