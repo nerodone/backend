@@ -2,9 +2,9 @@ package auth
 
 import (
 	"log"
+	"time"
 
 	"github.com/go-chi/jwtauth/v5"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 var TokenAuth *jwtauth.JWTAuth
@@ -14,14 +14,28 @@ type Payload struct {
 	Username string `json:"username"`
 }
 
+type DecodedToken struct {
+	Payload Payload
+	Aud     []string
+	Exp     time.Time
+	Issuer  string
+	Jti     string
+	Nbf     time.Time
+	Sub     string
+}
+
 func Encode(secret string) func(payload Payload) string {
 	return func(payload Payload) string {
+		_ = jwtauth.ExpireIn(time.Hour * 24)
+
 		TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
 
 		payloadMap := map[string]interface{}{
 			"user_id":  payload.UserID,
 			"username": payload.Username,
 		}
+
+		jwtauth.SetExpiryIn(payloadMap, time.Hour*24)
 		_, tokenString, err := TokenAuth.Encode(payloadMap)
 		if err != nil {
 			log.Fatal("Error encoding token", err)
@@ -31,7 +45,7 @@ func Encode(secret string) func(payload Payload) string {
 	}
 }
 
-func Decode(token string) (Payload, jwt.Token) {
+func Decode(token string) DecodedToken {
 	decodedToken, err := TokenAuth.Decode(token)
 	if err != nil {
 		log.Fatal("Error decoding token", err)
@@ -44,5 +58,13 @@ func Decode(token string) (Payload, jwt.Token) {
 		Username: claims["username"].(string),
 	}
 
-	return payload, decodedToken
+	return DecodedToken{
+		Payload: payload,
+		Aud:     decodedToken.Audience(),
+		Exp:     decodedToken.Expiration(),
+		Issuer:  decodedToken.Issuer(),
+		Jti:     decodedToken.JwtID(),
+		Nbf:     decodedToken.NotBefore(),
+		Sub:     decodedToken.Subject(),
+	}
 }
