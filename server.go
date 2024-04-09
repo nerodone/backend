@@ -1,8 +1,11 @@
 package main
 
 import (
+	"backend/internal/database"
 	"database/sql"
 	"os"
+
+	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
