@@ -23,6 +23,7 @@ type Server struct {
 func New() *Server {
 	godotenv.Load()
 	App := chi.NewRouter()
+	App.Use(middleware.Logger)
 
 	App.Use(middleware.Logger)
 

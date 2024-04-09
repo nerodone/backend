@@ -119,15 +119,16 @@ type Passwordlogin struct {
 }
 
 type Session struct {
-	ID              uuid.UUID     `json:"id"`
-	UserID          uuid.NullUUID `json:"user_id"`
-	RefreshToken    string        `json:"refresh_token"`
-	Platform        Eplatform     `json:"platform"`
-	Method          Emethod       `json:"method"`
-	OauthID         uuid.NullUUID `json:"oauth_id"`
-	PasswordLoginID uuid.NullUUID `json:"password_login_id"`
-	CreatedAt       time.Time     `json:"created_at"`
-	LastLogin       time.Time     `json:"last_login"`
+	ID              uuid.UUID      `json:"id"`
+	UserID          uuid.NullUUID  `json:"user_id"`
+	AccessToken     sql.NullString `json:"access_token"`
+	RefreshToken    string         `json:"refresh_token"`
+	Platform        Eplatform      `json:"platform"`
+	Method          Emethod        `json:"method"`
+	OauthID         uuid.NullUUID  `json:"oauth_id"`
+	PasswordLoginID uuid.NullUUID  `json:"password_login_id"`
+	CreatedAt       time.Time      `json:"created_at"`
+	LastLogin       time.Time      `json:"last_login"`
 }
 
 type User struct {
