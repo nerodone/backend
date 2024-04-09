@@ -21,14 +21,14 @@ func newSrv() *server {
 	godotenv.Load()
 	app := chi.NewRouter()
 
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	db, err := sql.Open("postgres", os.Getenv("XATA_PG"))
 	if err != nil {
 		panic(err)
 	}
 
 	return &server{
 		app:    app,
-		apiCfg: &apiConfig{PORT: os.Getenv("apiPORT")},
+		apiCfg: &apiConfig{PORT: os.Getenv("APIPORT")},
 		db:     database.New(db),
 	}
 }
