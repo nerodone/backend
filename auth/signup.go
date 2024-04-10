@@ -15,7 +15,7 @@ type UserSignupRequest struct {
 	Email    string `json:"email"`
 }
 
-func validateRequest(req *UserSignupRequest) bool {
+func (req *UserSignupRequest) validateSignupRequest() bool {
 	return validUsername(req.UserName) && validPlatform(req.Platform) && validPassword(req.Password) && validEmail(req.Email)
 }
 
@@ -31,7 +31,7 @@ type UserSignupResponse struct {
 func signup(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqPayload := &UserSignupRequest{}
-		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !validateRequest(reqPayload) {
+		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !reqPayload.validateSignupRequest() {
 			s.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 			return
 		}
@@ -56,8 +56,17 @@ func signup(s *server.Server) http.HandlerFunc {
 			return
 		}
 
-		accessToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, false)
-		refreshToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, true)
+		accessToken, err := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, false)
+		if err != nil {
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
+			return
+		}
+
+		refreshToken, err := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, true)
+		if err != nil {
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
+			return
+		}
 
 		SessionID, err := s.Db.CreateSessionWithPassword(s.Ctx, database.CreateSessionWithPasswordParams{
 			UserID:          user.ID,
