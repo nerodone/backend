@@ -25,6 +25,7 @@ type UserSignupResponse struct {
 	LastLogin    string `json:"last_login"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	SessionID    string `json:"session_id"`
 }
 
 func signup(s *server.Server) http.HandlerFunc {
@@ -65,7 +66,6 @@ func signup(s *server.Server) http.HandlerFunc {
 			AccessToken:     accessToken,
 			RefreshToken:    refreshToken,
 		})
-
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
 			return
@@ -76,11 +76,9 @@ func signup(s *server.Server) http.HandlerFunc {
 			LastLogin:    time.Now().Truncate(time.Second).UTC().String(),
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
+			SessionID:    SessionID.String(),
 		}
-		_ = resp
-		_ = SessionID
-
-		err = json.NewEncoder(w).Encode(resp)
+		err = s.ResponsWithJson(w, http.StatusCreated, resp)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
 			return
