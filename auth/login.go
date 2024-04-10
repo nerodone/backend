@@ -26,9 +26,9 @@ type loginRes struct {
 
 func login(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		reqPayload := &UserSignupRequest{}
+		reqPayload := &loginReq{}
 
-		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !reqPayload.validateSignupRequest() {
+		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !reqPayload.validateRequest() {
 			s.RespondWithError(w, http.StatusBadRequest, "Invalid request payload", "err", err.Error())
 			return
 		}
@@ -48,5 +48,6 @@ func login(s *server.Server) http.HandlerFunc {
 			return
 		}
 		_ = passwordID
+		_ = loginRes{}
 	}
 }
