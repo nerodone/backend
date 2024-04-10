@@ -32,7 +32,7 @@ func New() *Server {
 	}
 	jwt := Init(os.Getenv("JWT_SECRET"))
 
-	logger := log.NewWithOptions(os.Stdin, log.Options{
+	logger := log.NewWithOptions(os.Stderr, log.Options{
 		ReportCaller:    true,
 		ReportTimestamp: false,
 	})
