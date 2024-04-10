@@ -15,6 +15,7 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/tmp/main /app/main
+COPY .env /app
 ENV PORT=${PORT}
 
 CMD ["./main"]
