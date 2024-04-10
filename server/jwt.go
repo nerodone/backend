@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"time"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -32,7 +31,7 @@ func Init(secret string) JwtProvider {
 	return JwtProvider{TokenAuth: tokenAuth}
 }
 
-func (jwt JwtProvider) EncodeToken(payload Payload, isRefreshToken bool) string {
+func (jwt JwtProvider) EncodeToken(payload Payload, isRefreshToken bool) (string, error) {
 	payloadMap := map[string]interface{}{
 		"user_id":  payload.UserID,
 		"username": payload.Username,
@@ -48,18 +47,17 @@ func (jwt JwtProvider) EncodeToken(payload Payload, isRefreshToken bool) string 
 
 	jwtauth.SetExpiryIn(payloadMap, duration)
 	_, tokenString, err := jwt.TokenAuth.Encode(payloadMap)
-
 	if err != nil {
-		log.Fatal("Error encoding token", err)
+		return "", err
 	}
 
-	return tokenString
+	return tokenString, nil
 }
 
-func (jwt JwtProvider) DecodedToken(token string) DecodedToken {
+func (jwt JwtProvider) DecodedToken(token string) (DecodedToken, error) {
 	decodedToken, err := jwt.TokenAuth.Decode(token)
 	if err != nil {
-		log.Fatal("Error decoding token", err)
+		return DecodedToken{}, err
 	}
 
 	claims := decodedToken.PrivateClaims()
@@ -77,7 +75,7 @@ func (jwt JwtProvider) DecodedToken(token string) DecodedToken {
 		Jti:     decodedToken.JwtID(),
 		Nbf:     decodedToken.NotBefore(),
 		Sub:     decodedToken.Subject(),
-	}
+	}, nil
 }
 
 func (jwt JwtProvider) VerifyToken(token string) bool {
