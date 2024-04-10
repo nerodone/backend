@@ -8,11 +8,11 @@ import (
 func (s *Server) RespondWithError(w http.ResponseWriter, status int, message string, logs ...string) {
 	_ = s.ResponsWithJson(w, status, map[string]string{"error": message})
 	if len(logs) > 0 {
-		args := make([]interface{}, len(logs)+1)
-		for i, v := range logs[1:] {
-			args[i+1] = v
+		args := make([]interface{}, len(logs))
+		for i, v := range logs {
+			args[i] = v
 		}
-		s.Log.Debug("responded with error: "+message, args)
+		s.Log.Error("responded with error: "+message, args...)
 	}
 }
 
