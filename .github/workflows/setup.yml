@@ -57,7 +57,7 @@ jobs:
         # postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     env:
-      PG_PORT: ${{ job.services.postgres.ports['5432'] }}
+      PG_PORT: ${{ vet.services.postgres.ports['5432'] }}
     steps:
       - uses: actions/checkout@v3
       - name: Create migration file
