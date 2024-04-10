@@ -1,7 +1,7 @@
 package server
 
 import (
-	"backend/internal/database"
+	"backend/database"
 	"context"
 	"database/sql"
 	"os"
