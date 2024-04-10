@@ -1,3 +1,4 @@
 .env
 .env.fish
 tmp
+migration.sql
