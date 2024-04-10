@@ -14,6 +14,10 @@ type UserSignupRequest struct {
 	Email    string `json:"email"`
 }
 
+func validateRequest(req *UserSignupRequest) bool {
+	return validUsername(req.UserName) && validPlatform(req.Platform) && validPassword(req.Password) && validEmail(req.Email)
+}
+
 type UserSignupResponse struct {
 	UserName     string `json:"user_name"`
 	Email        string `json:"email"`
@@ -25,7 +29,7 @@ type UserSignupResponse struct {
 func signup(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqPayload := &UserSignupRequest{}
-		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !validateRequest(reqPayload) {
 			s.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 			return
 		}
