@@ -4,9 +4,9 @@ import (
 	"backend/internal/database"
 	"context"
 	"database/sql"
-	"log/slog"
 	"os"
 
+	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/lib/pq"
@@ -15,7 +15,7 @@ import (
 type Server struct {
 	PORT string
 	Ctx  context.Context
-	Log  *slog.Logger
+	Log  *log.Logger
 	App  *chi.Mux
 	Db   *database.Queries
 	JWT  JwtProvider
@@ -30,13 +30,16 @@ func New() *Server {
 	if err != nil {
 		panic(err)
 	}
-
 	jwt := Init(os.Getenv("JWT_SECRET"))
 
+	logger := log.NewWithOptions(os.Stderr, log.Options{
+		ReportCaller:    true,
+		ReportTimestamp: false,
+	})
 	return &Server{
 		PORT: os.Getenv("PORT"),
 		Ctx:  context.Background(),
-		Log:  slog.Default(),
+		Log:  logger,
 		App:  App,
 		Db:   database.New(db),
 		JWT:  jwt,

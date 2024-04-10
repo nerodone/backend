@@ -1,16 +1,19 @@
 package server
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
-var secret = "HelloWorld"
-var payload = Payload{
-	UserID:   "1",
-	Username: "test",
-}
+var (
+	secret  = "HelloWorld"
+	payload = Payload{
+		UserID:   "1",
+		Username: "test",
+	}
+)
 
 var jwt = Init(secret)
 
