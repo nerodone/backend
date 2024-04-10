@@ -3,9 +3,10 @@ package main
 import (
 	"backend/auth"
 	"backend/server"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
