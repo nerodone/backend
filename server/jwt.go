@@ -32,14 +32,23 @@ func Init(secret string) JwtProvider {
 	return JwtProvider{TokenAuth: tokenAuth}
 }
 
-func (jwt JwtProvider) EncodeToken(payload Payload) string {
+func (jwt JwtProvider) EncodeToken(payload Payload, isRefreshToken bool) string {
 	payloadMap := map[string]interface{}{
 		"user_id":  payload.UserID,
 		"username": payload.Username,
 	}
 
-	jwtauth.SetExpiryIn(payloadMap, time.Hour*24)
+	var duration time.Duration
+
+	if isRefreshToken {
+		duration = time.Hour * 24 * 90
+	} else {
+		duration = time.Hour * 24
+	}
+
+	jwtauth.SetExpiryIn(payloadMap, duration)
 	_, tokenString, err := jwt.TokenAuth.Encode(payloadMap)
+
 	if err != nil {
 		log.Fatal("Error encoding token", err)
 	}

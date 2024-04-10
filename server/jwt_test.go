@@ -17,7 +17,7 @@ var jwt = Init(secret)
 func TestJWT(t *testing.T) {
 	exp := time.Now().Add(time.Hour * 24).Truncate(time.Second).UTC()
 
-	token := jwt.EncodeToken(payload)
+	token := jwt.EncodeToken(payload, false)
 	decodedToken := jwt.DecodedToken(token)
 
 	assert.Equal(t, payload, decodedToken.Payload)
@@ -25,7 +25,7 @@ func TestJWT(t *testing.T) {
 }
 
 func TestVerifyToken(t *testing.T) {
-	token := jwt.EncodeToken(payload)
+	token := jwt.EncodeToken(payload, false)
 
 	assert.True(t, jwt.VerifyToken(token))
 	assert.False(t, jwt.VerifyToken(token[:len(token)-1]+"a"))
