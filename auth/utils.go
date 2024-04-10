@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"backend/internal/database"
+	"backend/database"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"backend/internal/database"
+	"backend/database"
 	"backend/server"
 	"encoding/json"
 	"net/http"

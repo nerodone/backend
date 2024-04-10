@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"backend/internal/database"
+	"backend/database"
 	"backend/server"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -32,51 +33,51 @@ func signup(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqPayload := &UserSignupRequest{}
 		if err := json.NewDecoder(r.Body).Decode(reqPayload); err != nil || !reqPayload.validateSignupRequest() {
-			s.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+			s.RespondWithError(w, http.StatusBadRequest, "Invalid request payload", "err", err.Error())
 			return
 		}
+		fmt.Println("1")
 
 		hashedPass, err := hashPassword(reqPayload.Password)
 		if err != nil {
-			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
-			return
-		}
-
-		user, err := s.Db.CreateUser(s.Ctx, database.CreateUserParams{UserName: reqPayload.UserName, Email: reqPayload.Email})
-		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
 
-		passwdID, err := s.Db.SignupWithPassword(s.Ctx, database.SignupWithPasswordParams{
-			UserID: user.ID, Email: user.Email, Password: hashedPass,
+		fmt.Print("2")
+		user, err := s.Db.CreateUser(s.Ctx, database.CreateUserParams{
+			UserName: reqPayload.UserName,
+			Email:    reqPayload.Email,
+			Password: hashedPass,
 		})
 		if err != nil {
-			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", "hihk")
 			return
 		}
 
+		fmt.Print("3")
 		accessToken, err := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, false)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
 
+		fmt.Print("4")
 		refreshToken, err := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, true)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
 
+		fmt.Print("5")
 		SessionID, err := s.Db.CreateSessionWithPassword(s.Ctx, database.CreateSessionWithPasswordParams{
-			UserID:          user.ID,
-			Platform:        database.Eplatform(reqPayload.Platform),
-			PasswordLoginID: NullableID(passwdID),
-			AccessToken:     accessToken,
-			RefreshToken:    refreshToken,
+			UserID:       user.ID,
+			Platform:     database.Eplatform(reqPayload.Platform),
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
 		})
 		if err != nil {
-			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
 		resp := &UserSignupResponse{
@@ -89,7 +90,7 @@ func signup(s *server.Server) http.HandlerFunc {
 		}
 		err = s.ResponsWithJson(w, http.StatusCreated, resp)
 		if err != nil {
-			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
 	}
