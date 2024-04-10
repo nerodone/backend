@@ -53,11 +53,15 @@ func signup(s *server.Server) http.HandlerFunc {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", err.Error())
 			return
 		}
-		// TODO: access/refresh_tokens
+
+		accessToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, false)
+		refreshToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, true)
 		SessionID, err := s.Db.CreateSessionWithPassword(s.Ctx, database.CreateSessionWithPasswordParams{
 			UserID:          user.ID,
 			Platform:        database.Eplatform(reqPayload.Platform),
 			PasswordLoginID: NullableID(passwdID),
+			AccessToken:     accessToken,
+			RefreshToken:    refreshToken,
 		})
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
