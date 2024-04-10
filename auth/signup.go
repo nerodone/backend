@@ -5,6 +5,7 @@ import (
 	"backend/server"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 type UserSignupRequest struct {
@@ -56,6 +57,7 @@ func signup(s *server.Server) http.HandlerFunc {
 
 		accessToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, false)
 		refreshToken := s.JWT.EncodeToken(server.Payload{UserID: user.ID.String(), Username: user.UserName}, true)
+
 		SessionID, err := s.Db.CreateSessionWithPassword(s.Ctx, database.CreateSessionWithPasswordParams{
 			UserID:          user.ID,
 			Platform:        database.Eplatform(reqPayload.Platform),
@@ -63,12 +65,25 @@ func signup(s *server.Server) http.HandlerFunc {
 			AccessToken:     accessToken,
 			RefreshToken:    refreshToken,
 		})
+
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
 			return
 		}
-		resp := &UserSignupResponse{}
+		resp := &UserSignupResponse{
+			UserName:     user.UserName,
+			Email:        user.Email,
+			LastLogin:    time.Now().Truncate(time.Second).UTC().String(),
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		}
 		_ = resp
 		_ = SessionID
+
+		err = json.NewEncoder(w).Encode(resp)
+		if err != nil {
+			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", err.Error())
+			return
+		}
 	}
 }
