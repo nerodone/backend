@@ -10,11 +10,7 @@ type Route struct {
 }
 
 func (s *Server) MountRoutes(route ...Route) {
-	r := chi.NewRouter()
-
 	for _, rt := range route {
-		r.Mount(rt.Endpoint, rt.Handler)
+		s.App.Mount(rt.Endpoint, rt.Handler)
 	}
-
-	s.App.Mount("/", r)
 }
