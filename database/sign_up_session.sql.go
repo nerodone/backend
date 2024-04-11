@@ -14,7 +14,7 @@ import (
 const createSessionWithPassword = `-- name: CreateSessionWithPassword :one
 insert into Sessions (id , user_id , access_token , refresh_token , platform, created_at, last_login)
 values ( gen_random_uuid(), $1 , $2 , $3 , $4 , NOW(), NOW())
-returning id
+returning id, user_id, access_token, refresh_token, platform, created_at, last_login
 `
 
 type CreateSessionWithPasswordParams struct {
@@ -24,14 +24,22 @@ type CreateSessionWithPasswordParams struct {
 	Platform     Eplatform `json:"platform"`
 }
 
-func (q *Queries) CreateSessionWithPassword(ctx context.Context, arg CreateSessionWithPasswordParams) (uuid.UUID, error) {
+func (q *Queries) CreateSessionWithPassword(ctx context.Context, arg CreateSessionWithPasswordParams) (Session, error) {
 	row := q.db.QueryRowContext(ctx, createSessionWithPassword,
 		arg.UserID,
 		arg.AccessToken,
 		arg.RefreshToken,
 		arg.Platform,
 	)
-	var id uuid.UUID
-	err := row.Scan(&id)
-	return id, err
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.AccessToken,
+		&i.RefreshToken,
+		&i.Platform,
+		&i.CreatedAt,
+		&i.LastLogin,
+	)
+	return i, err
 }

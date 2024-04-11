@@ -10,16 +10,11 @@ import (
 )
 
 const loginUser = `-- name: LoginUser :one
-SELECT id, user_name, email, password, created_at, last_login FROM users WHERE email = $1 AND password = $2 LIMIT 1
+SELECT id, user_name, email, password, created_at, last_login FROM users WHERE email = $1 LIMIT 1
 `
 
-type LoginUserParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (q *Queries) LoginUser(ctx context.Context, arg LoginUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, loginUser, arg.Email, arg.Password)
+func (q *Queries) LoginUser(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, loginUser, email)
 	var i User
 	err := row.Scan(
 		&i.ID,
