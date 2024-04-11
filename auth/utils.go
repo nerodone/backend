@@ -2,6 +2,7 @@ package auth
 
 import (
 	"backend/database"
+	"errors"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -42,4 +43,29 @@ func validPlatform(platform string) bool {
 		}
 	}
 	return false
+}
+
+var (
+	ErrDuplicateEmail    = errors.New("email already exists")
+	ErrDuplicateUserName = errors.New("username alerady exists")
+	ErrDatabaseIssue     = errors.New("databaae issue")
+)
+
+type SignupError struct {
+	originalErr error
+	responseErr error
+}
+
+func matchErr(err error) SignupError {
+	signupErr := SignupError{originalErr: err}
+	switch err.Error() {
+	case "pq: duplicate key value violates unique constraint \"users_email_key\"":
+		signupErr.responseErr = ErrDuplicateEmail
+
+	case "pq: duplicate key value violates unique constraint \"users_user_name_key\"":
+		signupErr.responseErr = ErrDuplicateUserName
+	default:
+		signupErr.responseErr = ErrDatabaseIssue
+	}
+	return signupErr
 }

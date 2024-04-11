@@ -50,7 +50,8 @@ func signup(s *server.Server) http.HandlerFunc {
 			Password: hashedPass,
 		})
 		if err != nil {
-			s.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error", "err", "hihk")
+			matchedErr := matchErr(err)
+			s.RespondWithError(w, http.StatusInternalServerError, matchedErr.responseErr.Error(), "original_err", matchedErr.originalErr.Error())
 			return
 		}
 
