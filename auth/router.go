@@ -10,6 +10,7 @@ func authRouter(s *server.Server) *chi.Mux {
 	r := chi.NewRouter()
 	r.Post("/signup", signup(s))
 	r.Post("/login", login(s))
+	r.Post("/logout", logout(s))
 
 	return r
 }
