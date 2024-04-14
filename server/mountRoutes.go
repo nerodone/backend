@@ -8,14 +8,19 @@ import (
 type Route struct {
 	Endpoint     string
 	Handler      *chi.Mux
-	isAuthorized bool
+	IsAuthorized bool
 }
 
 func (s *Server) MountRoutes(route ...Route) {
 	for _, rt := range route {
-		if rt.isAuthorized {
-			rt.Handler.Use(jwtauth.Verifier(s.JWT.TokenAuth))
-			rt.Handler.Use(jwtauth.Authenticator(s.JWT.TokenAuth))
+		if rt.IsAuthorized {
+			s.App.Group(func(r chi.Router) {
+				r.Use(jwtauth.Verifier(s.JWT.TokenAuth))
+				r.Use(jwtauth.Authenticator(s.JWT.TokenAuth))
+				r.Mount("/", rt.Handler)
+				s.App.Mount(rt.Endpoint, r)
+			})
+		} else {
 			s.App.Mount(rt.Endpoint, rt.Handler)
 		}
 	}
