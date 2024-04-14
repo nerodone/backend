@@ -6,7 +6,7 @@ import (
 )
 
 func (s *Server) RespondWithError(w http.ResponseWriter, status int, message string, logs ...string) {
-	s.ResponsWithJson(w, status, map[string]string{"error": message})
+	s.RespondWithJson(w, status, map[string]string{"error": message})
 	if len(logs) > 0 {
 		args := make([]interface{}, len(logs))
 		for i, v := range logs {
@@ -16,7 +16,7 @@ func (s *Server) RespondWithError(w http.ResponseWriter, status int, message str
 	}
 }
 
-func (s Server) ResponsWithJson(w http.ResponseWriter, stausCode int, payload interface{}) {
+func (s Server) RespondWithJson(w http.ResponseWriter, stausCode int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
 		s.Log.Error("error marshaling while responding with json", "err", err.Error())
