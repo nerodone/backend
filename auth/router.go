@@ -17,7 +17,8 @@ func authRouter(s *server.Server) *chi.Mux {
 
 func AuthRoutes(s *server.Server) server.Route {
 	return server.Route{
-		Endpoint: "/auth",
-		Handler:  authRouter(s),
+		Endpoint:     "/auth",
+		Handler:      authRouter(s),
+		IsAuthorized: false,
 	}
 }

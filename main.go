@@ -3,6 +3,7 @@ package main
 import (
 	"backend/auth"
 	"backend/server"
+	"backend/workspaces"
 	"log"
 	"net/http"
 
@@ -16,7 +17,6 @@ func main() {
 	}
 
 	s := server.New()
-
-	s.MountRoutes(auth.AuthRoutes(s))
+	s.MountRoutes(auth.AuthRoutes(s), workspaces.WorkspacesRoutes(s))
 	log.Fatal(http.ListenAndServe(":"+s.PORT, s.App))
 }
