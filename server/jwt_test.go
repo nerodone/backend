@@ -10,7 +10,7 @@ import (
 var (
 	secret  = "HelloWorld"
 	payload = Payload{
-		UserID:   "1",
+		UserID:   "7a1f595b-3cc2-453c-964c-46b3d3341b3b",
 		Username: "test",
 	}
 )

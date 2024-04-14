@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/google/uuid"
 )
 
 type Payload struct {
@@ -35,6 +36,9 @@ func (jwt JwtProvider) EncodeToken(payload Payload, isRefreshToken bool) (string
 	payloadMap := map[string]interface{}{
 		"user_id":  payload.UserID,
 		"username": payload.Username,
+	}
+	if _, err := uuid.Parse(payload.UserID); err != nil {
+		return "", err
 	}
 
 	var duration time.Duration
