@@ -59,6 +59,25 @@ func (ns NullEplatform) Value() (driver.Value, error) {
 	return string(ns.Eplatform), nil
 }
 
+type Collaborate struct {
+	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"user_id"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
+	Edit        bool      `json:"edit"`
+	Manage      bool      `json:"manage"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type Invite struct {
+	ID          uuid.UUID `json:"id"`
+	FromID      uuid.UUID `json:"from_id"`
+	ToID        uuid.UUID `json:"to_id"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	Manage      bool      `json:"manage"`
+	Edit        bool      `json:"edit"`
+}
+
 type Priority struct {
 	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
