@@ -1,7 +1,6 @@
 package workspaces
 
 import (
-	"backend/database"
 	"backend/server"
 	"fmt"
 	"net/http"
@@ -10,9 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type listWorkspacesResponse struct {
-	Workspaces []database.Workspace `json:"workspaces"`
-}
+// type listWorkspacesResponse struct {
+// 	Workspaces []database.Workspace `json:"workspaces"`
+// }
 
 func listWorkspaces(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

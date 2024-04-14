@@ -87,6 +87,6 @@ func signup(s *server.Server) http.HandlerFunc {
 			SessionID:    Session.ID.String(),
 			CreatedAt:    Session.CreatedAt.Truncate(time.Second).UTC(),
 		}
-		s.ResponsWithJson(w, http.StatusCreated, resp)
+		s.RespondWithJson(w, http.StatusCreated, resp)
 	}
 }
