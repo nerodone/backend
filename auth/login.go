@@ -91,6 +91,6 @@ func login(s *server.Server) http.HandlerFunc {
 			LastLogin:    userDB.LastLogin,
 			Platform:     reqPayload.Platform,
 		}
-		s.ResponsWithJson(w, http.StatusOK, responsePayload)
+		s.RespondWithJson(w, http.StatusOK, responsePayload)
 	}
 }
