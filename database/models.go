@@ -5,6 +5,7 @@
 package database
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -58,6 +59,22 @@ func (ns NullEplatform) Value() (driver.Value, error) {
 	return string(ns.Eplatform), nil
 }
 
+type Priority struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Workspace uuid.UUID `json:"workspace"`
+	Color     string    `json:"color"`
+}
+
+type Project struct {
+	ID          uuid.UUID      `json:"id"`
+	Name        string         `json:"name"`
+	Description sql.NullString `json:"description"`
+	Workspace   uuid.UUID      `json:"workspace"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+}
+
 type Session struct {
 	ID           uuid.UUID `json:"id"`
 	UserID       uuid.UUID `json:"user_id"`
@@ -68,6 +85,36 @@ type Session struct {
 	LastLogin    time.Time `json:"last_login"`
 }
 
+type Subtask struct {
+	ID          uuid.UUID      `json:"id"`
+	Name        string         `json:"name"`
+	TaskID      uuid.UUID      `json:"task_id"`
+	Status      string         `json:"status"`
+	Description sql.NullString `json:"description"`
+	Due         sql.NullTime   `json:"due"`
+	Url         sql.NullString `json:"url"`
+	CreatedBy   uuid.UUID      `json:"created_by"`
+	CreatedAt   time.Time      `json:"created_at"`
+	Priority    uuid.NullUUID  `json:"priority"`
+	Previous    uuid.NullUUID  `json:"previous"`
+	Next        uuid.NullUUID  `json:"next"`
+}
+
+type Task struct {
+	ID          uuid.UUID      `json:"id"`
+	Name        string         `json:"name"`
+	ProjectID   uuid.UUID      `json:"project_id"`
+	Status      string         `json:"status"`
+	Description sql.NullString `json:"description"`
+	Due         sql.NullTime   `json:"due"`
+	Url         sql.NullString `json:"url"`
+	CreatedBy   uuid.UUID      `json:"created_by"`
+	CreatedAt   time.Time      `json:"created_at"`
+	Priority    uuid.NullUUID  `json:"priority"`
+	Previous    uuid.NullUUID  `json:"previous"`
+	Next        uuid.NullUUID  `json:"next"`
+}
+
 type User struct {
 	ID        uuid.UUID `json:"id"`
 	UserName  string    `json:"user_name"`
@@ -75,4 +122,13 @@ type User struct {
 	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
 	LastLogin time.Time `json:"last_login"`
+}
+
+type Workspace struct {
+	ID          uuid.UUID      `json:"id"`
+	Owner       uuid.UUID      `json:"owner"`
+	Name        string         `json:"name"`
+	Description sql.NullString `json:"description"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
