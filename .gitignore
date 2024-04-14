@@ -2,3 +2,4 @@
 .env.fish
 tmp
 migration.sql
+backend
