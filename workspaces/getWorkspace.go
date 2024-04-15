@@ -14,10 +14,12 @@ func getWorkspaceByID(s *server.Server) http.HandlerFunc {
 		id, err := uuid.Parse(workspace_id)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "internal server error", "err", err.Error())
+			return
 		}
 		workspace, err := s.Db.GetWorkspaceByID(r.Context(), id)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "internal server error", "err", err.Error())
+			return
 		}
 		s.RespondWithJson(w, http.StatusOK, workspace)
 	}
