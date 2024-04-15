@@ -2,6 +2,7 @@ package auth
 
 import (
 	"backend/database"
+	_ "backend/docs"
 	"backend/server"
 	"encoding/json"
 	"net/http"
@@ -14,13 +15,13 @@ import (
 const (
 	ErrInvalidEmail    = "invalid email"
 	ErrInvalidPassword = "invalid password"
-	ErrInvalidRequest  = "Invalid request payload"
+	ErrInvalidRequest  = "invalid request payload"
 )
 
 type loginReq struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
-	Platform  string    `json:"platform"`
+	Platform  string    `json:"platform" enums:"web,cli,desktop,neovim,vscode"`
 	SessionId uuid.UUID `json:"session_id"`
 }
 
@@ -29,17 +30,29 @@ func (req *loginReq) validateRequest() bool {
 }
 
 type loginRes struct {
-	AccessToken  string    `json:"access_token"`
-	RefreshToken string    `json:"refresh_token"`
-	ID           string    `json:"id"`
-	UserName     string    `json:"user_name"`
-	Email        string    `json:"email"`
+	AccessToken  string    `json:"access_token" example:"token"`
+	RefreshToken string    `json:"refresh_token" example:"token"`
+	ID           string    `json:"id" example:"61fe5f30-2dfa-4991-97e0-f491027bbc41"`
+	UserName     string    `json:"user_name" example:"myUserName"`
+	Email        string    `json:"email" example:"user@test.com"`
 	CreatedAt    time.Time `json:"created_at"`
 	LastLogin    time.Time `json:"last_login"`
-	Platform     string    `json:"platform"`
-	SessionID    string    `json:"session_id"`
+	Platform     string    `json:"platform" enums:"web,cli,desktop,neovim,vscode"`
+	SessionID    string    `json:"session_id" example:"5d60d0ea-afe4-44d2-8455-cdc624becf07"`
 }
 
+// Login
+//
+//	@Summary	Authenticate user and return access and refresh tokens
+//	@Tags		auterrInvalidEmaierrInvalidEmaillh
+//	@Accept		json
+//	@Produce	json
+//	@Param		request	body			loginReq	true	" "
+//	@Success	200		{object}		loginRes
+//	@failure	401		"invalid email"	||	"invalid password"
+//	@failure	400		"invalid request payload"
+//	@Failure	500		"Internal Server Error"
+//	@Router		/auth/login [post]
 func login(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqPayload := &loginReq{}

@@ -1,0 +1,276 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server celler server.",
+        "title": "NeroDone api",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auterrInvalidEmaierrInvalidEmaillh"
+                ],
+                "summary": "Authenticate user and return access and refresh tokens",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginRes"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request payload"
+                    },
+                    "401": {
+                        "description": "invalid email\"\t||\t\"invalid password"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "send refresh token to get  new access token",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserRefreshRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserRefreshResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create new account using password and email",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserSignupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserSignupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload"
+                    },
+                    "409": {
+                        "description": "email\talerady\texists\"\t||\t\"username\talerady\texists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "auth.UserRefreshRequest": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                },
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.UserRefreshResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.UserSignupRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@test.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "StrongSecretPassword"
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "web",
+                        "cli",
+                        "desktop",
+                        "neovim",
+                        "vscode"
+                    ]
+                },
+                "user_name": {
+                    "type": "string",
+                    "example": "username"
+                }
+            }
+        },
+        "auth.UserSignupResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "web",
+                        "cli",
+                        "desktop",
+                        "neovim",
+                        "vscode"
+                    ]
+                },
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginRes": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string",
+                    "example": "token"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user@test.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "61fe5f30-2dfa-4991-97e0-f491027bbc41"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "web",
+                        "cli",
+                        "desktop",
+                        "neovim",
+                        "vscode"
+                    ]
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "token"
+                },
+                "session_id": {
+                    "type": "string",
+                    "example": "5d60d0ea-afe4-44d2-8455-cdc624becf07"
+                },
+                "user_name": {
+                    "type": "string",
+                    "example": "myUserName"
+                }
+            }
+        }
+    }
+}

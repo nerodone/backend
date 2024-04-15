@@ -2,6 +2,7 @@ package auth
 
 import (
 	"backend/database"
+	_ "backend/docs"
 	"errors"
 
 	"github.com/google/uuid"

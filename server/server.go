@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/lib/pq"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type Server struct {
@@ -23,9 +24,8 @@ type Server struct {
 
 func New() *Server {
 	App := chi.NewRouter()
-
 	App.Use(middleware.Logger)
-
+	App.Mount("/swagger", httpSwagger.WrapHandler)
 	db, err := sql.Open("postgres", os.Getenv("XATA_PG"))
 	if err != nil {
 		panic(err)

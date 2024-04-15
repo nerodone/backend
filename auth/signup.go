@@ -9,10 +9,10 @@ import (
 )
 
 type UserSignupRequest struct {
-	UserName string `json:"user_name"`
-	Platform string `json:"platform"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	UserName string `json:"user_name" example:"username"`
+	Platform string `json:"platform" enums:"web,cli,desktop,neovim,vscode"`
+	Password string `json:"password" example:"StrongSecretPassword"`
+	Email    string `json:"email" example:"user@test.com"`
 }
 
 func (req *UserSignupRequest) validateSignupRequest() bool {
@@ -20,7 +20,7 @@ func (req *UserSignupRequest) validateSignupRequest() bool {
 }
 
 type UserSignupResponse struct {
-	ID           string    `json:"id"`
+	ID           string    `json:"id" example:"f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d"`
 	UserName     string    `json:"user_name"`
 	Email        string    `json:"email"`
 	AccessToken  string    `json:"access_token"`
@@ -30,6 +30,17 @@ type UserSignupResponse struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
+// signup
+//
+//	@Summary	create new account using password and email
+//	@Accept		json
+//	@Produce	json
+//	@Param		request	body		UserSignupRequest	true	" "
+//	@Success	201		{object}	UserSignupResponse
+//	@failure	400		"Invalid request payload"
+//	@failure	409		""email	alerady	exists"	||	"username	alerady	exists"
+//	@Failure	500		"Internal Server Error"
+//	@Router		/auth/signup [post]
 func signup(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		reqPayload := &UserSignupRequest{}
@@ -50,8 +61,12 @@ func signup(s *server.Server) http.HandlerFunc {
 			Password: hashedPass,
 		})
 		if err != nil {
+			status := http.StatusConflict
 			matchedErr := matchErr(err)
-			s.RespondWithError(w, http.StatusInternalServerError, matchedErr.responseErr.Error(), "original_err", matchedErr.originalErr.Error())
+			if matchedErr.responseErr == ErrDatabaseIssue {
+				status = http.StatusInternalServerError
+			}
+			s.RespondWithError(w, status, matchedErr.responseErr.Error(), "original_err", matchedErr.originalErr.Error())
 			return
 		}
 
