@@ -36,15 +36,18 @@ func refresh(s *server.Server) http.HandlerFunc {
 		payload, err := s.JWT.DecodedToken(requestPayload.RefreshToken)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Error Decoding Token", err.Error())
+			return
 		}
 
 		sessionId, err := uuid.Parse(requestPayload.SessionId)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Error Parsing sessionId", err.Error())
+			return
 		}
 		session, err := s.Db.GetSessionById(s.Ctx, sessionId)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Error Getting Session", err.Error())
+			return
 		}
 
 		newPayload := server.Payload{
@@ -54,11 +57,13 @@ func refresh(s *server.Server) http.HandlerFunc {
 		accessToken, err := s.JWT.EncodeToken(newPayload, false)
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Error Encoding Access Token", err.Error())
+			return
 		}
 
 		_, err = s.Db.UpdateAccessToken(s.Ctx, database.UpdateAccessTokenParams{ID: session.ID, AccessToken: accessToken})
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "Error updating access token", err.Error())
+			return
 		}
 
 		resp := &UserRefreshResponse{
