@@ -61,6 +61,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete session : revoke access token refresh token",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.logoutReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "invalid request payload"
+                    },
+                    "500": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
         "/auth/refresh": {
             "post": {
                 "consumes": [
@@ -277,6 +310,15 @@ const docTemplate = `{
                 "user_name": {
                     "type": "string",
                     "example": "myUserName"
+                }
+            }
+        },
+        "auth.logoutReq": {
+            "type": "object",
+            "properties": {
+                "session_id": {
+                    "type": "string",
+                    "example": "f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d"
                 }
             }
         }

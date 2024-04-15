@@ -101,6 +101,12 @@ definitions:
         example: myUserName
         type: string
     type: object
+  auth.logoutReq:
+    properties:
+      session_id:
+        example: f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d
+        type: string
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -137,6 +143,27 @@ paths:
       summary: Authenticate user and return access and refresh tokens
       tags:
       - auterrInvalidEmaierrInvalidEmaillh
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.logoutReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid request payload
+        "500":
+          description: internal Server Error
+      summary: 'delete session : revoke access token refresh token'
   /auth/refresh:
     post:
       consumes:
