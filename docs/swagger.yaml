@@ -1,3 +1,106 @@
+definitions:
+  auth.UserRefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+      session_id:
+        type: string
+    type: object
+  auth.UserRefreshResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  auth.UserSignupRequest:
+    properties:
+      email:
+        example: user@test.com
+        type: string
+      password:
+        example: StrongSecretPassword
+        type: string
+      platform:
+        enum:
+        - web
+        - cli
+        - desktop
+        - neovim
+        - vscode
+        type: string
+      user_name:
+        example: username
+        type: string
+    type: object
+  auth.UserSignupResponse:
+    properties:
+      access_token:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        example: f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d
+        type: string
+      last_login:
+        type: string
+      refresh_token:
+        type: string
+      session_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  auth.loginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      platform:
+        enum:
+        - web
+        - cli
+        - desktop
+        - neovim
+        - vscode
+        type: string
+      session_id:
+        type: string
+    type: object
+  auth.loginRes:
+    properties:
+      access_token:
+        example: token
+        type: string
+      created_at:
+        type: string
+      email:
+        example: user@test.com
+        type: string
+      id:
+        example: 61fe5f30-2dfa-4991-97e0-f491027bbc41
+        type: string
+      last_login:
+        type: string
+      platform:
+        enum:
+        - web
+        - cli
+        - desktop
+        - neovim
+        - vscode
+        type: string
+      refresh_token:
+        example: token
+        type: string
+      session_id:
+        example: 5d60d0ea-afe4-44d2-8455-cdc624becf07
+        type: string
+      user_name:
+        example: myUserName
+        type: string
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -6,5 +109,78 @@ info:
   description: This is a sample server celler server.
   title: NeroDone api
   version: "1.0"
-paths: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.loginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.loginRes'
+        "400":
+          description: invalid request payload
+        "401":
+          description: "invalid email\"\t||\t\"invalid password"
+        "500":
+          description: Internal Server Error
+      summary: Authenticate user and return access and refresh tokens
+      tags:
+      - auterrInvalidEmaierrInvalidEmaillh
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserRefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.UserRefreshResponse'
+        "500":
+          description: Internal Server Error
+      summary: send refresh token to get  new access token
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' '
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserSignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.UserSignupResponse'
+        "400":
+          description: Invalid request payload
+        "409":
+          description: "email\talerady\texists\"\t||\t\"username\talerady\texists"
+        "500":
+          description: Internal Server Error
+      summary: create new account using password and email
 swagger: "2.0"

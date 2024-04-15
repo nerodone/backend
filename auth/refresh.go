@@ -2,6 +2,7 @@ package auth
 
 import (
 	"backend/database"
+	_ "backend/docs"
 	"backend/server"
 	"encoding/json"
 	"net/http"
@@ -23,6 +24,15 @@ func validateRefreshRequest(s *server.Server, req *UserRefreshRequest) bool {
 	return s.JWT.VerifyToken(refreshToken)
 }
 
+// refresh
+//
+//	@Summary	send refresh token to get  new access token
+//	@Accept		json
+//	@Produce	json
+//	@Param		request	body		UserRefreshRequest	true	" "
+//	@Success	201		{object}	UserRefreshResponse
+//	@Failure	500		"Internal Server Error"
+//	@Router		/auth/refresh [post]
 func refresh(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestPayload := &UserRefreshRequest{}
