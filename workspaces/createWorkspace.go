@@ -17,6 +17,17 @@ type createWorkspaceReq struct {
 	Description string `json:"description"`
 }
 
+// createWorkspace
+//
+//	@Summary	create a workspace , the user will be owner of the created workspace
+//	@Tags		workspaces
+//	@Produce	json
+//	@Accepts	json
+//	@Param		request	body		createWorkspaceReq	true	" "
+//	@Success	201		{object}	database.Workspace
+//	@failure	400		"invalid request"
+//	@Failure	500		"internal Server Error"
+//	@Router		/workspaces/ [post]
 func createWorkspace(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := createWorkspaceReq{}

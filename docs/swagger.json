@@ -157,6 +157,97 @@
                     }
                 }
             }
+        },
+        "/workspaces": {
+            "get": {
+                "description": "List all worksapces that the user is either the owner of or collaborates on",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspaces"
+                ],
+                "summary": "List all worksapces that the user is either the owner of or collaborates on",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/database.Workspace"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request payload"
+                    },
+                    "500": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/workspaces/": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspaces"
+                ],
+                "summary": "create a workspace , the user will be owner of the created workspace",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/workspaces.createWorkspaceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/database.Workspace"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request"
+                    },
+                    "500": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/workspaces/{workspace_id}": {
+            "get": {
+                "description": "List all worksapces that the user is either the owner of or collaborates on",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspaces"
+                ],
+                "summary": "List all worksapces that the user is either the owner of or collaborates on",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/database.Workspace"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to get workspace"
+                    },
+                    "500": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -311,6 +402,40 @@
                 "session_id": {
                     "type": "string",
                     "example": "f5b1c9e2-1b2c-4b5c-8f1d-8f5b1c9e2f1d"
+                }
+            }
+        },
+        "database.Workspace": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "workspaces.createWorkspaceReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "workspace_name": {
+                    "type": "string"
                 }
             }
         }

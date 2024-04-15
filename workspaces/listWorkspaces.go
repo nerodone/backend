@@ -1,6 +1,7 @@
 package workspaces
 
 import (
+	"backend/database"
 	"backend/server"
 	"fmt"
 	"net/http"
@@ -9,10 +10,18 @@ import (
 	"github.com/google/uuid"
 )
 
-// type listWorkspacesResponse struct {
-// 	Workspaces []database.Workspace `json:"workspaces"`
-// }
+type workspaces []database.Workspace
 
+// listWorkspaces
+//
+//	@Description	List all worksapces that the user is either the owner of or collaborates on
+//	@Summary		List all worksapces that the user is either the owner of or collaborates on
+//	@Tags			workspaces
+//	@Produce		json
+//	@Success		200	{object}	workspaces
+//	@failure		400	"invalid request payload"
+//	@Failure		500	"internal Server Error"
+//	@Router			/workspaces [get]
 func listWorkspaces(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, err := jwtauth.FromContext(r.Context())
@@ -23,7 +32,7 @@ func listWorkspaces(s *server.Server) http.HandlerFunc {
 
 		userID, err := uuid.Parse(claims["user_id"].(string))
 		if err != nil {
-			s.RespondWithError(w, http.StatusBadRequest, "invalid request", "err", err.Error())
+			s.RespondWithError(w, http.StatusBadRequest, "invalid request payload", "err", err.Error())
 			return
 		}
 
