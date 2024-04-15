@@ -9,12 +9,26 @@ choices=(
 )
 
 run_docker() {
+	source ./.env
 	docker build -t nero_backend --label nero_backend .
-	docker run -d --env-file=.env -p 3000:3000 nero_backend:latest
+	docker run \
+		-e XATA_HTTP=$XATA_HTTP \
+		-e XATA_PG=$XATA_PG \
+		-e XATA_API_KEY=$XATA_API_KEY \
+		-e JWT_SECRET=$JWT_SECRET \
+		-e PORT=$PORT \
+		-e RUNTIME="DOCKER" \
+		-p 3000:3000 nero_backend:latest
 }
 
 run_air() {
 	if [ -f ".air.toml" ] && command -v air >/dev/null; then
+		source ./.env
+		export XATA_HTTP=$XATA_HTTP
+		export XATA_PG=$XATA_PG
+		export XATA_API_KEY=$XATA_API_KEY
+		export JWT_SECRET=$JWT_SECRET
+		export PORT=$PORT
 		air -c .air.toml
 	else
 		echo "air.toml not found or air not installed"
@@ -40,7 +54,7 @@ run_tmux() {
 	tmux send-keys -t nero "nvim" C-m
 
 	tmux new-window -S -n build
-	tmux send-keys -t nero "air -c .air.toml" C-m
+	tmux send-keys -t nero "sh ./dev.sh air" C-m
 	tmux new-window -S -n test
 	tmux send-keys -t nero "go test ./..." C-m
 
