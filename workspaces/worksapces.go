@@ -17,15 +17,11 @@ type workspace struct {
 }
 
 func WorkspaceFromDB(w *database.Workspace) workspace {
-	desc := ""
-	if w.Description.Valid {
-		desc = w.Description.String
-	}
 	return workspace{
 		ID:          w.ID,
 		Owner:       w.Owner,
 		Name:        w.Name,
-		Description: desc,
+		Description: *w.Description,
 		CreatedAt:   w.CreatedAt,
 		UpdatedAt:   w.UpdatedAt,
 	}

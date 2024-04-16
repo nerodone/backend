@@ -10,15 +10,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type workspaces []database.Workspace
-
 // listWorkspaces
 //
 //	@Description	List all worksapces that the user is either the owner of or collaborates on
 //	@Summary		List all worksapces that the user is either the owner of or collaborates on
 //	@Tags			workspaces
 //	@Produce		json
-//	@Success		200	{object}	workspaces
+//	@Success		200	{array}	database.Workspace
 //	@failure		400	"invalid request payload"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces [get]
@@ -37,6 +35,9 @@ func listWorkspaces(s *server.Server) http.HandlerFunc {
 		}
 
 		workspaces, err := s.Db.GetAllWorkspaces(r.Context(), userID)
+		if workspaces == nil {
+			workspaces = []database.Workspace{}
+		}
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "internal server error", "err", err.Error())
 			return

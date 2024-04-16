@@ -11,8 +11,8 @@ func workspaceRouter(s *server.Server) *chi.Mux {
 	r.Get("/", listWorkspaces(s))
 	r.Post("/", createWorkspace(s))
 	r.Get("/{workspace_id}", getWorkspaceByID(s))
-	// r.Put("/{workspace_id}", updateWorkspace(s)
-	// r.Delete("/{workspace_id}", deleteWorkspace(s)
+	r.Put("/{workspace_id}", updateWorkspace(s))
+	r.Delete("/{workspace_id}", deleteWorkspace(s))
 
 	return r
 }
