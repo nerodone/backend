@@ -17,18 +17,7 @@ create table invite (
     manage boolean not null,
     edit boolean not null
 );
--- Table Collaborate{
---   id string
---   user string
---   workspace string
---   edit boolean
---   manage boolean
---   created_at date
--- }
--- Table Invite{
---   id string
---   user string
---   invited string
---   workspace string
---   created_at string
--- }
+
+-- +goose Down
+DROP TABLE invite;
+DROP TABLE collaborate;
