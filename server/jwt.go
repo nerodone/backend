@@ -97,10 +97,19 @@ func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
 		token := tokenFromHeader(r)
 		DecodedToken, err := s.JWT.DecodedToken(token)
 		if err != nil {
-			s.RespondWithError(w, http.StatusUnauthorized, "Unauthorized access", "err", err.Error())
+			s.RespondWithError(w, http.StatusUnauthorized, "unauthorized access", "err", err.Error())
+			return
 		}
 		id, _ := uuid.Parse(DecodedToken.Payload.UserID)
-		s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{Userid: id, Accesstoken: token})
+		Verified, err := s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{Userid: id, Accesstoken: token})
+		if err != nil {
+			s.RespondWithError(w, http.StatusInternalServerError, "internel server error", "err", err.Error())
+			return
+		}
+		if !Verified {
+			s.RespondWithError(w, http.StatusUnauthorized, "unauthorized access", "err", err.Error())
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }
