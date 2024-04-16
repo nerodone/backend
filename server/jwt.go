@@ -1,6 +1,9 @@
 package server
 
 import (
+	"backend/database"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -85,4 +88,28 @@ func (jwt JwtProvider) DecodedToken(token string) (DecodedToken, error) {
 func (jwt JwtProvider) VerifyToken(token string) bool {
 	_, err := jwtauth.VerifyToken(jwt.TokenAuth, token)
 	return err == nil
+}
+
+// JWTAuthenticator checks if an already verified expiration , issuer token exists in the database
+// used to prevent access after logining out where the session entry is deleted
+func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := tokenFromHeader(r)
+		DecodedToken, err := s.JWT.DecodedToken(token)
+		if err != nil {
+			s.RespondWithError(w, http.StatusUnauthorized, "Unauthorized access", "err", err.Error())
+		}
+		id, _ := uuid.Parse(DecodedToken.Payload.UserID)
+		s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{Userid: id, Accesstoken: token})
+		next.ServeHTTP(w, r)
+	})
+}
+
+func tokenFromHeader(r *http.Request) string {
+	// Get token from authorization header.
+	bearer := r.Header.Get("Authorization")
+	if len(bearer) > 7 && strings.ToUpper(bearer[0:6]) == "BEARER" {
+		return bearer[7:]
+	}
+	return ""
 }

@@ -17,6 +17,7 @@ func (s *Server) MountRoutes(route ...Route) {
 			s.App.Group(func(r chi.Router) {
 				r.Use(jwtauth.Verifier(s.JWT.TokenAuth))
 				r.Use(jwtauth.Authenticator(s.JWT.TokenAuth))
+				r.Use(s.JWTAuthenticator)
 				r.Mount("/", rt.Handler)
 				s.App.Mount(rt.Endpoint, r)
 			})
