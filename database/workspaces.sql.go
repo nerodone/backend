@@ -39,6 +39,15 @@ func (q *Queries) CreateWorkspace(ctx context.Context, arg CreateWorkspaceParams
 	return i, err
 }
 
+const deleteWorkspace = `-- name: DeleteWorkspace :exec
+DELETE FROM workspaces WHERE id = $1
+`
+
+func (q *Queries) DeleteWorkspace(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteWorkspace, id)
+	return err
+}
+
 const getAllWorkspaces = `-- name: GetAllWorkspaces :many
 SELECT id, owner, name, description, created_at, updated_at
 FROM workspaces w
@@ -46,8 +55,8 @@ WHERE w.owner = $1::uuid
 OR EXISTS (
   SELECT 1
   FROM collaborate c
-  WHERE c.user = $1::uuid
-  AND c.workspace = w.id
+  WHERE c.user_id = $1::uuid
+  AND c.workspace_id = w.id
 )
 `
 
@@ -98,4 +107,20 @@ func (q *Queries) GetWorkspaceByID(ctx context.Context, id uuid.UUID) (Workspace
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const updateWorkspace = `-- name: UpdateWorkspace :exec
+UPDATE workspaces SET name = $3, description = $2, updated_at = NOW() WHERE id = $1
+`
+
+type UpdateWorkspaceParams struct {
+	ID          uuid.UUID      `json:"id"`
+	Description sql.NullString `json:"description"`
+	Name        string         `json:"name"`
+}
+
+// UpdateWorkspace can only update the workspace name and description
+func (q *Queries) UpdateWorkspace(ctx context.Context, arg UpdateWorkspaceParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkspace, arg.ID, arg.Description, arg.Name)
+	return err
 }
