@@ -182,12 +182,15 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/database.Workspace"
+                                "$ref": "#/definitions/workspaces.workspace"
                             }
                         }
                     },
                     "400": {
-                        "description": "invalid request payload"
+                        "description": "invalid token"
+                    },
+                    "401": {
+                        "description": "unauthorized access"
                     },
                     "500": {
                         "description": "internal Server Error"
@@ -219,11 +222,11 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/database.Workspace"
+                            "$ref": "#/definitions/workspaces.workspace"
                         }
                     },
-                    "400": {
-                        "description": "invalid request"
+                    "401": {
+                        "description": "unauthorized access"
                     },
                     "500": {
                         "description": "internal Server Error"
@@ -245,14 +248,68 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/database.Workspace"
+                            "$ref": "#/definitions/workspaces.workspace"
                         }
                     },
-                    "400": {
-                        "description": "Failed to get workspace"
+                    "401": {
+                        "description": "unauthorized access"
                     },
                     "500": {
                         "description": "internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "workspaces"
+                ],
+                "summary": "update workspace metadata (name, description) , empty fields are not ignored !",
+                "parameters": [
+                    {
+                        "description": " ",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/workspaces.updateWorkspaceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid request payload||invalid workspace_id"
+                    },
+                    "401": {
+                        "description": "unauthorized access"
+                    },
+                    "404": {
+                        "description": "workspace not found"
+                    },
+                    "500": {
+                        "description": "internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "workspaces"
+                ],
+                "summary": "delete workspace",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "invalid workspace_id"
+                    },
+                    "401": {
+                        "description": "unauthorized access"
+                    },
+                    "404": {
+                        "description": "workspace not found"
                     }
                 }
             }
@@ -353,9 +410,6 @@ const docTemplate = `{
                         "neovim",
                         "vscode"
                     ]
-                },
-                "session_id": {
-                    "type": "string"
                 }
             }
         },
@@ -413,7 +467,32 @@ const docTemplate = `{
                 }
             }
         },
-        "database.Workspace": {
+        "workspaces.createWorkspaceReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "workspace_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "workspaces.updateWorkspaceReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "workspace_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "workspaces.workspace": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -432,17 +511,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "workspaces.createWorkspaceReq": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "workspace_name": {
                     "type": "string"
                 }
             }
