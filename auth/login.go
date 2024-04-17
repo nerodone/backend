@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,10 +18,9 @@ const (
 )
 
 type loginReq struct {
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	Platform  string    `json:"platform" enums:"web,cli,desktop,neovim,vscode"`
-	SessionId uuid.UUID `json:"session_id"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Platform string `json:"platform" enums:"web,cli,desktop,neovim,vscode"`
 }
 
 func (req *loginReq) validateRequest() bool {
