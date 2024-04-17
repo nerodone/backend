@@ -90,8 +90,9 @@ func (jwt JwtProvider) VerifyToken(token string) bool {
 	return err == nil
 }
 
-// JWTAuthenticator checks if an already verified expiration , issuer token exists in the database
-// used to prevent access after logining out where the session entry is deleted
+// JWTAuthenticator checks if an already verified expiration/issuer token exists in the database
+// it does not verify neither the expiration nor the issuer, it only checks if the token exists in the database
+// used to prevent access after loging out where the session entry is deleted
 func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := tokenFromHeader(r)
