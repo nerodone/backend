@@ -2,6 +2,7 @@ package server
 
 import (
 	"backend/database"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -101,6 +102,7 @@ func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
 			s.RespondWithError(w, http.StatusUnauthorized, "unauthorized access", "err", err.Error())
 			return
 		}
+		fmt.Printf("w is nill : %v", w == nil)
 		id, _ := uuid.Parse(DecodedToken.Payload.UserID)
 		Verified, err := s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{UserID: id, AccessToken: token})
 		if err != nil {
@@ -108,7 +110,7 @@ func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
 			return
 		}
 		if !Verified {
-			s.RespondWithError(w, http.StatusUnauthorized, "unauthorized access", "err", err.Error())
+			s.RespondWithError(w, http.StatusUnauthorized, "unauthorized access")
 			return
 		}
 		next.ServeHTTP(w, r)
