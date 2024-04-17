@@ -14,6 +14,7 @@ import (
 //	@Tags		workspaces
 //	@Success	200
 //	@failure	400	"invalid workspace_id"
+//	@failure	401	"unauthorized access"
 //	@failure	404	"workspace not found"
 //	@Router		/workspaces/{workspace_id} [delete]
 func deleteWorkspace(s *server.Server) http.HandlerFunc {

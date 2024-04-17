@@ -1,7 +1,6 @@
 package workspaces
 
 import (
-	"backend/database"
 	"backend/server"
 	"net/http"
 
@@ -15,7 +14,7 @@ import (
 //	@Summary		List all worksapces that the user is either the owner of or collaborates on
 //	@Tags			workspaces
 //	@Produce		json
-//	@Success		200	{array}	database.Workspace
+//	@Success		200	{array}	workspace
 //	@failure		400	"invalid token"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces [get]
@@ -33,9 +32,11 @@ func listWorkspaces(s *server.Server) http.HandlerFunc {
 			return
 		}
 
-		workspaces, err := s.Db.GetAllWorkspaces(r.Context(), userID)
-		if workspaces == nil {
-			workspaces = []database.Workspace{}
+		workspacesDB, err := s.Db.GetAllWorkspaces(r.Context(), userID)
+
+		workspaces := []workspace{}
+		for _, w := range workspacesDB {
+			workspaces = append(workspaces, WorkspaceFromDB(&w))
 		}
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "internal server error", "err", err.Error())

@@ -21,9 +21,11 @@ type updateWorkspaceReq struct {
 //
 //	@Summary	update workspace metadata (name, description) , empty fields are ignored
 //	@Tags		workspaces
+//	@Param		request	body		updateWorkspaceReq	true	" "
 //	@Accepts	json
 //	@Success	204
 //	@failure	400	"invalid request payload||invalid workspace_id"
+//	@failure	401	"unauthorized access"
 //	@failure	404	"workspace not found"
 //	@Failure	500	"internal Server Error"
 //	@Router		/workspaces/{workspace_id} [put]

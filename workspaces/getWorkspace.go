@@ -15,8 +15,9 @@ import (
 //	@Tags			workspaces
 //	@Produce		json
 //	@Accepts		json
-//	@Success		200	{object}	database.Workspace
-//	@failure		400	"Failed to get workspace"
+//	@Success		200	{object}	workspace
+//	@failure	401	"unauthorized access"
+//	//	@failure		400	"Failed to get workspace"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces/{workspace_id} [get]
 func getWorkspaceByID(s *server.Server) http.HandlerFunc {
@@ -32,6 +33,6 @@ func getWorkspaceByID(s *server.Server) http.HandlerFunc {
 			s.RespondWithError(w, http.StatusInternalServerError, "Failed to get workspace", "err", err.Error())
 			return
 		}
-		s.RespondWithJson(w, http.StatusOK, workspace)
+		s.RespondWithJson(w, http.StatusOK, WorkspaceFromDB(&workspace))
 	}
 }

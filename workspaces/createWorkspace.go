@@ -24,8 +24,9 @@ type createWorkspaceReq struct {
 //	@Produce	json
 //	@Accepts	json
 //	@Param		request	body		createWorkspaceReq	true	" "
-//	@Success	201		{object}	database.Workspace
-//	@failure	400		"invalid request"
+//	@Success	201		{object}	workspace
+//	//	@failure	400		"invalid request"
+//	@failure	401	"unauthorized access"
 //	@Failure	500		"internal Server Error"
 //	@Router		/workspaces/ [post]
 func createWorkspace(s *server.Server) http.HandlerFunc {
@@ -58,6 +59,6 @@ func createWorkspace(s *server.Server) http.HandlerFunc {
 			s.RespondWithError(w, http.StatusInternalServerError, "internal server error", "err", err.Error())
 			return
 		}
-		s.RespondWithJson(w, http.StatusCreated, workspace)
+		s.RespondWithJson(w, http.StatusCreated, WorkspaceFromDB(&workspace))
 	}
 }
