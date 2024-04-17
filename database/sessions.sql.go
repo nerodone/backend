@@ -15,18 +15,18 @@ const authenicateUser = `-- name: AuthenicateUser :one
 SELECT EXISTS (
   SELECT 1
   FROM sessions 
-  WHERE user_id = $1::uuid
-  AND access_token = $2::string
+  WHERE user_id = $1
+  AND access_token = $2
 )
 `
 
 type AuthenicateUserParams struct {
-	Userid      uuid.UUID `json:"userid"`
-	Accesstoken string    `json:"accesstoken"`
+	UserID      uuid.UUID `json:"user_id"`
+	AccessToken string    `json:"access_token"`
 }
 
 func (q *Queries) AuthenicateUser(ctx context.Context, arg AuthenicateUserParams) (bool, error) {
-	row := q.db.QueryRowContext(ctx, authenicateUser, arg.Userid, arg.Accesstoken)
+	row := q.db.QueryRowContext(ctx, authenicateUser, arg.UserID, arg.AccessToken)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

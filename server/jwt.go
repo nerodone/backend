@@ -102,7 +102,7 @@ func (s *Server) JWTAuthenticator(next http.Handler) http.Handler {
 			return
 		}
 		id, _ := uuid.Parse(DecodedToken.Payload.UserID)
-		Verified, err := s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{Userid: id, Accesstoken: token})
+		Verified, err := s.Db.AuthenicateUser(r.Context(), database.AuthenicateUserParams{UserID: id, AccessToken: token})
 		if err != nil {
 			s.RespondWithError(w, http.StatusInternalServerError, "internel server error", "err", err.Error())
 			return
