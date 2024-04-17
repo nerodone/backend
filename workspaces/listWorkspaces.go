@@ -3,7 +3,6 @@ package workspaces
 import (
 	"backend/database"
 	"backend/server"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -17,20 +16,20 @@ import (
 //	@Tags			workspaces
 //	@Produce		json
 //	@Success		200	{array}	database.Workspace
-//	@failure		400	"invalid request payload"
+//	@failure		400	"invalid token"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces [get]
 func listWorkspaces(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, err := jwtauth.FromContext(r.Context())
 		if err != nil {
-			fmt.Fprintf(w, "Error %v", err)
+			s.RespondWithError(w, http.StatusBadRequest, "invalid token", "err", err.Error())
 			return
 		}
 
 		userID, err := uuid.Parse(claims["user_id"].(string))
 		if err != nil {
-			s.RespondWithError(w, http.StatusBadRequest, "invalid request payload", "err", err.Error())
+			s.RespondWithError(w, http.StatusBadRequest, "invalid token", "err", err.Error())
 			return
 		}
 
