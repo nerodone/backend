@@ -3,7 +3,6 @@ package workspaces
 import (
 	"backend/database"
 	"backend/server"
-	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -12,14 +11,14 @@ import (
 )
 
 type updateWorkspaceReq struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	WorkspaceID uuid.UUID      `json:"workspace_id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
 }
 
 // updateWorkspace
 //
-//	@Summary	update workspace metadata (name, description) , empty fields are ignored
+//	@Summary	update workspace metadata (name, description) , empty fields are not ignored !
 //	@Tags		workspaces
 //	@Param		request	body	updateWorkspaceReq	true	" "
 //	@Accepts	json
@@ -37,16 +36,18 @@ func updateWorkspace(s *server.Server) http.HandlerFunc {
 			s.RespondWithError(w, 400, "invalid workspace_id", "err", err.Error(), "id", workspaceIDString)
 			return
 		}
-		req := updateWorkspaceReq{}
 
+		req := updateWorkspaceReq{}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			s.RespondWithError(w, http.StatusBadRequest, "invalid request payload", "err", err.Error())
 			return
 		}
 
+		NillabeDescription := toNillableString(req.Description)
+
 		err = s.Db.UpdateWorkspace(r.Context(), database.UpdateWorkspaceParams{
 			ID:          workspaceID,
-			Description: req.Description,
+			Description: NillabeDescription,
 			Name:        req.Name,
 		})
 		if err != nil {

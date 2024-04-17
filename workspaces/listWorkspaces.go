@@ -16,6 +16,7 @@ import (
 //	@Produce		json
 //	@Success		200	{array}	workspace
 //	@failure		400	"invalid token"
+//	@failure		401	"unauthorized access"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces [get]
 func listWorkspaces(s *server.Server) http.HandlerFunc {

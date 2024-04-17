@@ -26,7 +26,7 @@ type createWorkspaceReq struct {
 //	@Param		request	body		createWorkspaceReq	true	" "
 //	@Success	201		{object}	workspace
 //	//	@failure	400		"invalid request"
-//	@failure	401	"unauthorized access"
+//	@failure	401		"unauthorized access"
 //	@Failure	500		"internal Server Error"
 //	@Router		/workspaces/ [post]
 func createWorkspace(s *server.Server) http.HandlerFunc {

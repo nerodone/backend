@@ -16,7 +16,7 @@ import (
 //	@Produce		json
 //	@Accepts		json
 //	@Success		200	{object}	workspace
-//	@failure	401	"unauthorized access"
+//	@failure		401	"unauthorized access"
 //	//	@failure		400	"Failed to get workspace"
 //	@Failure		500	"internal Server Error"
 //	@Router			/workspaces/{workspace_id} [get]
