@@ -12,16 +12,16 @@ import (
 )
 
 type updateWorkspaceReq struct {
-	WorkspaceID int            `json:"workspace_id"`
 	Name        string         `json:"name"`
 	Description sql.NullString `json:"description"`
+	WorkspaceID uuid.UUID      `json:"workspace_id"`
 }
 
 // updateWorkspace
 //
 //	@Summary	update workspace metadata (name, description) , empty fields are ignored
 //	@Tags		workspaces
-//	@Param		request	body		updateWorkspaceReq	true	" "
+//	@Param		request	body	updateWorkspaceReq	true	" "
 //	@Accepts	json
 //	@Success	204
 //	@failure	400	"invalid request payload||invalid workspace_id"
