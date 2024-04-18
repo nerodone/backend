@@ -4,20 +4,43 @@ insert into workspaces (id, name, owner, updated_at, created_at, description) va
 )
 returning *;
 
--- name: GetAllWorkspaces :many
---GetAllWorkspaces returns all workspaces that the user is the owner of or collaborates on.
-SELECT *
-FROM workspaces w
-WHERE w.owner = sqlc.arg(user_id)::uuid
+
+--GetAllWorkspacesWithProjects returns all workspaces that contain projects where the user is the owner of or collaborates on the workspace.
+-- name: GetAllWorkspacesWithProjects :many
+SELECT sqlc.embed(workspaces), sqlc.embed(projects)
+FROM workspaces
+JOIN projects ON projects.workspace = workspaces.id
+WHERE workspaces.owner = sqlc.arg(user_id)::uuid
 OR EXISTS (
   SELECT 1
   FROM collaborate c
   WHERE c.user_id = sqlc.arg(user_id)::uuid
+  AND c.workspace_id = workspaces.id
+);
+-- name: GetAllWorkspaces :many
+--GetAllWorkspaces doesnt return projects assosiated to each workspace
+SELECT *
+FROM workspaces w
+WHERE w.owner = $1
+OR EXISTS (
+  SELECT 1
+  FROM collaborate c
+  WHERE c.user_id = $1
   AND c.workspace_id = w.id
 );
 
+
+-- name: GetWorkspaceWithProjectsByID :many
+SELECT sqlc.embed(workspaces), sqlc.embed(projects) 
+FROM workspaces JOIN projects ON projects.workspace_id = workspaces.id 
+WHERE workspaces.id = $1;
+
+
 -- name: GetWorkspaceByID :one
-SELECT * FROM workspaces WHERE id = $1;      
+-- GetWorkspaceByID doesnt reuturn projects asssiated with the project
+SELECT * FROM workspaces WHERE id = $1;
+
+
 
 
 -- name: UpdateWorkspace :exec
