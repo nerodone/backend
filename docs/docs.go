@@ -182,7 +182,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/workspaces.workspace"
+                                "$ref": "#/definitions/types.Workspace"
                             }
                         }
                     },
@@ -222,7 +222,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/workspaces.workspace"
+                            "$ref": "#/definitions/types.Workspace"
                         }
                     },
                     "401": {
@@ -248,7 +248,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/workspaces.workspace"
+                            "$ref": "#/definitions/types.Workspace"
                         }
                     },
                     "401": {
@@ -467,6 +467,58 @@ const docTemplate = `{
                 }
             }
         },
+        "types.Project": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "workspace_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Workspace": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Project"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "workspaces.createWorkspaceReq": {
             "type": "object",
             "properties": {
@@ -488,29 +540,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "workspace_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "workspaces.workspace": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
