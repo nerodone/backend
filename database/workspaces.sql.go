@@ -51,18 +51,18 @@ func (q *Queries) DeleteWorkspace(ctx context.Context, id uuid.UUID) error {
 const getAllWorkspaces = `-- name: GetAllWorkspaces :many
 SELECT id, owner, name, description, created_at, updated_at
 FROM workspaces w
-WHERE w.owner = $1::uuid
+WHERE w.owner = $1
 OR EXISTS (
   SELECT 1
   FROM collaborate c
-  WHERE c.user_id = $1::uuid
+  WHERE c.user_id = $1
   AND c.workspace_id = w.id
 )
 `
 
-// GetAllWorkspaces returns all workspaces that the user is the owner of or collaborates on.
-func (q *Queries) GetAllWorkspaces(ctx context.Context, userID uuid.UUID) ([]Workspace, error) {
-	rows, err := q.db.QueryContext(ctx, getAllWorkspaces, userID)
+// GetAllWorkspaces doesnt return projects assosiated to each workspace
+func (q *Queries) GetAllWorkspaces(ctx context.Context, owner uuid.UUID) ([]Workspace, error) {
+	rows, err := q.db.QueryContext(ctx, getAllWorkspaces, owner)
 	if err != nil {
 		return nil, err
 	}
@@ -91,10 +91,66 @@ func (q *Queries) GetAllWorkspaces(ctx context.Context, userID uuid.UUID) ([]Wor
 	return items, nil
 }
 
+const getAllWorkspacesWithProjects = `-- name: GetAllWorkspacesWithProjects :many
+SELECT workspaces.id, workspaces.owner, workspaces.name, workspaces.description, workspaces.created_at, workspaces.updated_at, projects.id, projects.name, projects.description, projects.workspace, projects.created_at, projects.updated_at
+FROM workspaces
+JOIN projects ON projects.workspace = workspaces.id
+WHERE workspaces.owner = $1::uuid
+OR EXISTS (
+  SELECT 1
+  FROM collaborate c
+  WHERE c.user_id = $1::uuid
+  AND c.workspace_id = workspaces.id
+)
+`
+
+type GetAllWorkspacesWithProjectsRow struct {
+	Workspace Workspace `json:"workspace"`
+	Project   Project   `json:"project"`
+}
+
+// GetAllWorkspacesWithProjects returns all workspaces that contain projects where the user is the owner of or collaborates on the workspace.
+func (q *Queries) GetAllWorkspacesWithProjects(ctx context.Context, userID uuid.UUID) ([]GetAllWorkspacesWithProjectsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllWorkspacesWithProjects, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllWorkspacesWithProjectsRow
+	for rows.Next() {
+		var i GetAllWorkspacesWithProjectsRow
+		if err := rows.Scan(
+			&i.Workspace.ID,
+			&i.Workspace.Owner,
+			&i.Workspace.Name,
+			&i.Workspace.Description,
+			&i.Workspace.CreatedAt,
+			&i.Workspace.UpdatedAt,
+			&i.Project.ID,
+			&i.Project.Name,
+			&i.Project.Description,
+			&i.Project.Workspace,
+			&i.Project.CreatedAt,
+			&i.Project.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getWorkspaceByID = `-- name: GetWorkspaceByID :one
 SELECT id, owner, name, description, created_at, updated_at FROM workspaces WHERE id = $1
 `
 
+// GetWorkspaceByID doesnt reuturn projects asssiated with the project
 func (q *Queries) GetWorkspaceByID(ctx context.Context, id uuid.UUID) (Workspace, error) {
 	row := q.db.QueryRowContext(ctx, getWorkspaceByID, id)
 	var i Workspace
@@ -107,6 +163,53 @@ func (q *Queries) GetWorkspaceByID(ctx context.Context, id uuid.UUID) (Workspace
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getWorkspaceWithProjectsByID = `-- name: GetWorkspaceWithProjectsByID :many
+SELECT workspaces.id, workspaces.owner, workspaces.name, workspaces.description, workspaces.created_at, workspaces.updated_at, projects.id, projects.name, projects.description, projects.workspace, projects.created_at, projects.updated_at 
+FROM workspaces JOIN projects ON projects.workspace_id = workspaces.id 
+WHERE workspaces.id = $1
+`
+
+type GetWorkspaceWithProjectsByIDRow struct {
+	Workspace Workspace `json:"workspace"`
+	Project   Project   `json:"project"`
+}
+
+func (q *Queries) GetWorkspaceWithProjectsByID(ctx context.Context, id uuid.UUID) ([]GetWorkspaceWithProjectsByIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, getWorkspaceWithProjectsByID, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetWorkspaceWithProjectsByIDRow
+	for rows.Next() {
+		var i GetWorkspaceWithProjectsByIDRow
+		if err := rows.Scan(
+			&i.Workspace.ID,
+			&i.Workspace.Owner,
+			&i.Workspace.Name,
+			&i.Workspace.Description,
+			&i.Workspace.CreatedAt,
+			&i.Workspace.UpdatedAt,
+			&i.Project.ID,
+			&i.Project.Name,
+			&i.Project.Description,
+			&i.Project.Workspace,
+			&i.Project.CreatedAt,
+			&i.Project.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateWorkspace = `-- name: UpdateWorkspace :exec
