@@ -3,6 +3,7 @@ package workspaces
 import (
 	"backend/database"
 	"backend/server"
+	"backend/types"
 	"encoding/json"
 	"net/http"
 
@@ -43,7 +44,7 @@ func updateWorkspace(s *server.Server) http.HandlerFunc {
 			return
 		}
 
-		NillabeDescription := toNillableString(req.Description)
+		NillabeDescription := types.ToNillableString(req.Description)
 
 		err = s.Db.UpdateWorkspace(r.Context(), database.UpdateWorkspaceParams{
 			ID:          workspaceID,

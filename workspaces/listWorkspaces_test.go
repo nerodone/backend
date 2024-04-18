@@ -97,3 +97,46 @@ func TestMatchProjectsToWorkspaces(t *testing.T) {
 		})
 	}
 }
+
+func TestMergeWorkspaces(t *testing.T) {
+	ws1ID, ws2ID, ws3ID := uuid.New(), uuid.New(), uuid.New()
+	p1ID, p2ID, p3ID := uuid.New(), uuid.New(), uuid.New()
+	type args struct {
+		wAll          []types.Workspace
+		wWithProjects []types.Workspace
+	}
+	tests := []struct {
+		name string
+		args args
+		want []types.Workspace
+	}{
+		{
+			name: "Test case 1: Merging workspaces with multiple projects",
+			args: args{
+				wAll: []types.Workspace{
+					{ID: ws1ID, Projects: nil},
+					{ID: ws2ID, Projects: nil},
+					{ID: ws3ID, Projects: nil},
+				},
+				wWithProjects: []types.Workspace{
+					{ID: ws1ID, Projects: []types.Project{{ID: p1ID, Name: "Project 1"}, {ID: p2ID, Name: "Project 2"}}},
+					{ID: ws2ID, Projects: []types.Project{{ID: p3ID, Name: "Project 3"}}},
+				},
+			},
+
+			want: []types.Workspace{
+				{ID: ws1ID, Projects: []types.Project{{ID: p1ID, Name: "Project 1"}, {ID: p2ID, Name: "Project 2"}}},
+				{ID: ws2ID, Projects: []types.Project{{ID: p3ID, Name: "Project 3"}}},
+				{ID: ws3ID, Projects: nil},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MergeWorkspaces(tt.args.wAll, tt.args.wWithProjects); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got = %+v, want %+v", got, tt.want)
+			}
+		})
+	}
+}
